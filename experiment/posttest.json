@@ -2,38 +2,46 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "Which of the following signals will have a left-sided ROC for their Laplace transform? ",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "u(-t) ",
+        "b": "sin(t)",
+        "c": "u(4-t)",
+        "d": "|sin(t)|"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "explanations": "a and c"
       },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
+      "correctAnswer": "a and c",
+      "difficulty": "Advance"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "Select the correct statement(s) from below for the system function X(s) = (s + 1)/(s - 1) ",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "system can be causal  ",
+        "b": "system can be stable",
+        "c": "system can be both causal & stable ",
+        "d": "cannot say"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "explanations": "a and b"
       },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+      "correctAnswer": "a and b",
+      "difficulty": "Advance"
+    },
+    {
+      "question": "A system function is of the form H(s) = (s-a)/(s-b), where a is not equal to b and they are real numbers. This system can be both stable and causal if  ",
+      "answers": {
+        "a": "a > 0  ",
+        "b": "a < 0 ",
+        "c": "b > 0 ",
+        "d": "b < 0 "
+      },
+      "explanations": {
+        "explanations": "d"
+      },
+      "correctAnswer": "d",
+      "difficulty": "Advance"
     }
   ]
 }
