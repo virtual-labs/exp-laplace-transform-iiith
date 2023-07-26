@@ -336,18 +336,42 @@ function sPlaneInit(){
     };
       
     Plotly.newPlot('figure1', data, layout2, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure1', update);
     Plotly.newPlot('figure2', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure2', update);
-    
+    /*
     ln = numerator.length;
     ld = denominator.length;
     var message = "$ \frac{";
@@ -369,7 +393,7 @@ function sPlaneInit(){
     var element = document.getElementById("result4")
     element.style.color = "#000000";
     element.style.fontWeight = "bold";
-    element.innerHTML = message;
+    element.innerHTML = message;*/
 }
 
 function sPlane(){
@@ -581,16 +605,40 @@ function sPlane(){
     };
       
     Plotly.newPlot('figure1', data, layout2, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure1', update);
     Plotly.newPlot('figure2', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure2', update);
     
     ln = numerator.length;
@@ -880,16 +928,40 @@ function ROCNumberInit(){
     var config = {responsive: true}
       
     Plotly.newPlot('figure3', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure3', update);
     /*Plotly.newPlot('figure4', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure4', update);*/
 }
 
@@ -1186,10 +1258,22 @@ function polyInit()
     var config = {responsive: true}
       
     Plotly.newPlot('figure5', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure5', update);
 }
 
@@ -1494,16 +1578,40 @@ function sPlaneInitI(){
         };
           
         Plotly.newPlot('figure6', data, layout, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
+                
+        if(screen.width < 400)
+        {
+            var update = {
+                width: 0.7*screen.width,
+                height: 400
+            };
+        }
+        else
+        {
+            var update = {
+                width: 350,
+                height: 400
+            };
+        }
+
         Plotly.relayout('figure6', update);
         Plotly.newPlot('figure7', data1, layout1, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
+                
+        if(screen.width < 400)
+        {
+            var update = {
+                width: 0.7*screen.width,
+                height: 400
+            };
+        }
+        else
+        {
+            var update = {
+                width: 350,
+                height: 400
+            };
+        }
+
         Plotly.relayout('figure7', update);
 }
 
@@ -1755,16 +1863,40 @@ function sPlaneI(){
         };
           
         Plotly.newPlot('figure6', data, layout, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
+                
+        if(screen.width < 400)
+        {
+            var update = {
+                width: 0.7*screen.width,
+                height: 400
+            };
+        }
+        else
+        {
+            var update = {
+                width: 350,
+                height: 400
+            };
+        }
+
         Plotly.relayout('figure6', update);
         Plotly.newPlot('figure7', data1, layout1, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
+                
+        if(screen.width < 400)
+        {
+            var update = {
+                width: 0.7*screen.width,
+                height: 400
+            };
+        }
+        else
+        {
+            var update = {
+                width: 350,
+                height: 400
+            };
+        }
+
         Plotly.relayout('figure7', update);
 }
 
@@ -2002,10 +2134,22 @@ function StabilityInit(){
     var config = {responsive: true}
       
     Plotly.newPlot('figure8', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure8', update);
 
     var rocs = [];
@@ -2157,10 +2301,22 @@ function filteringInit(){
     var config = {responsive: true}
       
     Plotly.newPlot('figure9', data, layout1, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure9', update);
 }
 
@@ -2407,10 +2563,22 @@ function filterCheck()
     };
     
     Plotly.newPlot('figure9', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+            
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure9', update);
 }
 
