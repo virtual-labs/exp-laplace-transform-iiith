@@ -1,0 +1,239 @@
+
+/home/runner/work/exp-laplace-transform-iiith/exp-laplace-transform-iiith/experiment/simulation/js/main.js
+     3:5    warning  'k' is defined but never used                      no-unused-vars
+     4:5    warning  'p' is defined but never used                      no-unused-vars
+     5:5    warning  'sigChoice' is defined but never used              no-unused-vars
+     6:5    warning  'scaleChoice' is defined but never used            no-unused-vars
+     7:5    warning  'delayChoice' is defined but never used            no-unused-vars
+     8:5    warning  'boxChoice' is defined but never used              no-unused-vars
+     9:5    warning  'yValues' is defined but never used                no-unused-vars
+    10:5    warning  'inValues' is defined but never used               no-unused-vars
+    15:5    warning  'always' is defined but never used                 no-unused-vars
+    17:5    warning  'ROCNum1' is assigned a value but never used       no-unused-vars
+    29:10   warning  'openPart' is defined but never used               no-unused-vars
+    45:10   warning  'add_field' is defined but never used              no-unused-vars
+    56:10   warning  'remove_field' is defined but never used           no-unused-vars
+    65:10   warning  'fourier' is defined but never used                no-unused-vars
+    71:19   warning  'math' is not defined                              no-undef
+    74:19   warning  'math' is not defined                              no-undef
+    74:33   warning  'math' is not defined                              no-undef
+    74:59   warning  'math' is not defined                              no-undef
+    76:12   warning  'math' is not defined                              no-undef
+    78:24   warning  'math' is not defined                              no-undef
+    78:39   warning  'math' is not defined                              no-undef
+    81:12   warning  'math' is not defined                              no-undef
+    83:17   warning  'sum1' is already defined                          no-redeclare
+    83:24   warning  'math' is not defined                              no-undef
+    83:37   warning  'math' is not defined                              no-undef
+    91:10   warning  'invFourier' is defined but never used             no-unused-vars
+    97:19   warning  'math' is not defined                              no-undef
+   100:19   warning  'math' is not defined                              no-undef
+   100:32   warning  'math' is not defined                              no-undef
+   100:45   warning  'math' is not defined                              no-undef
+   100:96   warning  'math' is not defined                              no-undef
+   100:145  warning  'math' is not defined                              no-undef
+   100:196  warning  'math' is not defined                              no-undef
+   102:12   warning  'math' is not defined                              no-undef
+   104:24   warning  'math' is not defined                              no-undef
+   104:39   warning  'math' is not defined                              no-undef
+   107:12   warning  'math' is not defined                              no-undef
+   109:17   warning  'sum1' is already defined                          no-redeclare
+   109:24   warning  'math' is not defined                              no-undef
+   109:37   warning  'math' is not defined                              no-undef
+   117:10   warning  'shift' is defined but never used                  no-unused-vars
+   125:13   warning  'i' is already defined                             no-redeclare
+   182:18   warning  'math' is not defined                              no-undef
+   182:26   warning  'math' is not defined                              no-undef
+   196:17   warning  'i' is already defined                             no-redeclare
+   203:13   warning  'a1' is already defined                            no-redeclare
+   205:17   warning  'i' is already defined                             no-redeclare
+   212:13   warning  'a1' is already defined                            no-redeclare
+   213:13   warning  'b1' is already defined                            no-redeclare
+   215:17   warning  'i' is already defined                             no-redeclare
+   225:17   warning  'i' is already defined                             no-redeclare
+   232:13   warning  'a1' is already defined                            no-redeclare
+   233:17   warning  'i' is already defined                             no-redeclare
+   240:13   warning  'a1' is already defined                            no-redeclare
+   241:13   warning  'b1' is already defined                            no-redeclare
+   242:17   warning  'i' is already defined                             no-redeclare
+   249:13   warning  'a1' is already defined                            no-redeclare
+   250:13   warning  'b1' is already defined                            no-redeclare
+   251:13   warning  'c1' is already defined                            no-redeclare
+   252:17   warning  'i' is already defined                             no-redeclare
+   260:13   warning  'i' is already defined                             no-redeclare
+   265:13   warning  'i' is already defined                             no-redeclare
+   269:13   warning  'i' is already defined                             no-redeclare
+   338:5    warning  'Plotly' is not defined                            no-undef
+   349:13   warning  'update' is already defined                        no-redeclare
+   355:5    warning  'Plotly' is not defined                            no-undef
+   356:5    warning  'Plotly' is not defined                            no-undef
+   360:13   warning  'update' is already defined                        no-redeclare
+   367:13   warning  'update' is already defined                        no-redeclare
+   373:5    warning  'Plotly' is not defined                            no-undef
+   399:10   warning  'sPlane' is defined but never used                 no-unused-vars
+   451:18   warning  'math' is not defined                              no-undef
+   451:26   warning  'math' is not defined                              no-undef
+   465:17   warning  'i' is already defined                             no-redeclare
+   472:13   warning  'a1' is already defined                            no-redeclare
+   474:17   warning  'i' is already defined                             no-redeclare
+   481:13   warning  'a1' is already defined                            no-redeclare
+   482:13   warning  'b1' is already defined                            no-redeclare
+   484:17   warning  'i' is already defined                             no-redeclare
+   494:17   warning  'i' is already defined                             no-redeclare
+   501:13   warning  'a1' is already defined                            no-redeclare
+   502:17   warning  'i' is already defined                             no-redeclare
+   509:13   warning  'a1' is already defined                            no-redeclare
+   510:13   warning  'b1' is already defined                            no-redeclare
+   511:17   warning  'i' is already defined                             no-redeclare
+   518:13   warning  'a1' is already defined                            no-redeclare
+   519:13   warning  'b1' is already defined                            no-redeclare
+   520:13   warning  'c1' is already defined                            no-redeclare
+   521:17   warning  'i' is already defined                             no-redeclare
+   529:13   warning  'i' is already defined                             no-redeclare
+   534:13   warning  'i' is already defined                             no-redeclare
+   538:13   warning  'i' is already defined                             no-redeclare
+   607:5    warning  'Plotly' is not defined                            no-undef
+   618:13   warning  'update' is already defined                        no-redeclare
+   624:5    warning  'Plotly' is not defined                            no-undef
+   625:5    warning  'Plotly' is not defined                            no-undef
+   629:13   warning  'update' is already defined                        no-redeclare
+   636:13   warning  'update' is already defined                        no-redeclare
+   642:5    warning  'Plotly' is not defined                            no-undef
+   648:13   warning  'i' is already defined                             no-redeclare
+   655:13   warning  'i' is already defined                             no-redeclare
+   719:13   warning  'o' is already defined                             no-redeclare
+   877:13   warning  'i' is already defined                             no-redeclare
+   930:5    warning  'Plotly' is not defined                            no-undef
+   941:13   warning  'update' is already defined                        no-redeclare
+   947:5    warning  'Plotly' is not defined                            no-undef
+   968:10   warning  'ROCNumber' is defined but never used              no-unused-vars
+   991:13   warning  'element' is already defined                       no-redeclare
+   995:13   warning  'x' is already defined                             no-redeclare
+  1058:10   warning  'ROCList' is defined but never used                no-unused-vars
+  1080:13   warning  'i' is already defined                             no-redeclare
+  1102:13   warning  'i' is already defined                             no-redeclare
+  1124:13   warning  'i' is already defined                             no-redeclare
+  1135:13   warning  'element' is already defined                       no-redeclare
+  1142:13   warning  'element' is already defined                       no-redeclare
+  1151:10   warning  'polyInit' is defined but never used               no-unused-vars
+  1207:13   warning  'i' is already defined                             no-redeclare
+  1260:5    warning  'Plotly' is not defined                            no-undef
+  1271:13   warning  'update' is already defined                        no-redeclare
+  1277:5    warning  'Plotly' is not defined                            no-undef
+  1280:10   warning  'poly' is defined but never used                   no-unused-vars
+  1309:13   warning  'element' is already defined                       no-redeclare
+  1317:13   warning  'element' is already defined                       no-redeclare
+  1324:9    warning  'element' is already defined                       no-redeclare
+  1347:32   warning  'pltn' is assigned a value but never used          no-unused-vars
+  1347:43   warning  'pltd' is assigned a value but never used          no-unused-vars
+  1348:22   warning  'math' is not defined                              no-undef
+  1348:30   warning  'math' is not defined                              no-undef
+  1350:13   warning  'numeratorR' is assigned a value but never used    no-unused-vars
+  1351:13   warning  'numeratorI' is assigned a value but never used    no-unused-vars
+  1352:13   warning  'denominatorR' is assigned a value but never used  no-unused-vars
+  1353:13   warning  'denominatorI' is assigned a value but never used  no-unused-vars
+  1363:21   warning  'i' is already defined                             no-redeclare
+  1372:21   warning  'i' is already defined                             no-redeclare
+  1381:21   warning  'i' is already defined                             no-redeclare
+  1390:21   warning  'i' is already defined                             no-redeclare
+  1399:21   warning  'i' is already defined                             no-redeclare
+  1410:21   warning  'i' is already defined                             no-redeclare
+  1421:21   warning  'i' is already defined                             no-redeclare
+  1432:21   warning  'i' is already defined                             no-redeclare
+  1441:21   warning  'i' is already defined                             no-redeclare
+  1452:21   warning  'i' is already defined                             no-redeclare
+  1463:21   warning  'i' is already defined                             no-redeclare
+  1474:21   warning  'i' is already defined                             no-redeclare
+  1483:21   warning  'i' is already defined                             no-redeclare
+  1494:21   warning  'i' is already defined                             no-redeclare
+  1505:21   warning  'i' is already defined                             no-redeclare
+  1580:9    warning  'Plotly' is not defined                            no-undef
+  1591:17   warning  'update' is already defined                        no-redeclare
+  1597:9    warning  'Plotly' is not defined                            no-undef
+  1598:9    warning  'Plotly' is not defined                            no-undef
+  1602:17   warning  'update' is already defined                        no-redeclare
+  1609:17   warning  'update' is already defined                        no-redeclare
+  1615:9    warning  'Plotly' is not defined                            no-undef
+  1618:10   warning  'sPlaneI' is defined but never used                no-unused-vars
+  1632:32   warning  'pltn' is assigned a value but never used          no-unused-vars
+  1632:43   warning  'pltd' is assigned a value but never used          no-unused-vars
+  1633:22   warning  'math' is not defined                              no-undef
+  1633:30   warning  'math' is not defined                              no-undef
+  1635:13   warning  'numeratorR' is assigned a value but never used    no-unused-vars
+  1636:13   warning  'numeratorI' is assigned a value but never used    no-unused-vars
+  1637:13   warning  'denominatorR' is assigned a value but never used  no-unused-vars
+  1638:13   warning  'denominatorI' is assigned a value but never used  no-unused-vars
+  1648:21   warning  'i' is already defined                             no-redeclare
+  1657:21   warning  'i' is already defined                             no-redeclare
+  1666:21   warning  'i' is already defined                             no-redeclare
+  1675:21   warning  'i' is already defined                             no-redeclare
+  1684:21   warning  'i' is already defined                             no-redeclare
+  1695:21   warning  'i' is already defined                             no-redeclare
+  1706:21   warning  'i' is already defined                             no-redeclare
+  1717:21   warning  'i' is already defined                             no-redeclare
+  1726:21   warning  'i' is already defined                             no-redeclare
+  1737:21   warning  'i' is already defined                             no-redeclare
+  1748:21   warning  'i' is already defined                             no-redeclare
+  1759:21   warning  'i' is already defined                             no-redeclare
+  1768:21   warning  'i' is already defined                             no-redeclare
+  1779:21   warning  'i' is already defined                             no-redeclare
+  1790:21   warning  'i' is already defined                             no-redeclare
+  1865:9    warning  'Plotly' is not defined                            no-undef
+  1876:17   warning  'update' is already defined                        no-redeclare
+  1882:9    warning  'Plotly' is not defined                            no-undef
+  1883:9    warning  'Plotly' is not defined                            no-undef
+  1887:17   warning  'update' is already defined                        no-redeclare
+  1894:17   warning  'update' is already defined                        no-redeclare
+  1900:9    warning  'Plotly' is not defined                            no-undef
+  1905:10   warning  'add_field1' is defined but never used             no-unused-vars
+  1916:10   warning  'remove_field1' is defined but never used          no-unused-vars
+  1926:10   warning  'stabilityInit' is defined but never used          no-unused-vars
+  2079:13   warning  'i' is already defined                             no-redeclare
+  2083:13   warning  'i' is already defined                             no-redeclare
+  2136:5    warning  'Plotly' is not defined                            no-undef
+  2147:13   warning  'update' is already defined                        no-redeclare
+  2153:5    warning  'Plotly' is not defined                            no-undef
+  2156:13   warning  'i' is already defined                             no-redeclare
+  2179:17   warning  'left' is already defined                          no-redeclare
+  2188:17   warning  'left' is already defined                          no-redeclare
+  2189:17   warning  'right' is already defined                         no-redeclare
+  2209:44   warning  Unnecessary escape character: \p                   no-useless-escape
+  2212:10   warning  'stabilityCheck' is defined but never used         no-unused-vars
+  2228:13   warning  'element' is already defined                       no-redeclare
+  2235:13   warning  'element' is already defined                       no-redeclare
+  2242:13   warning  'element' is already defined                       no-redeclare
+  2266:13   warning  'element' is already defined                       no-redeclare
+  2303:5    warning  'Plotly' is not defined                            no-undef
+  2314:13   warning  'update' is already defined                        no-redeclare
+  2320:5    warning  'Plotly' is not defined                            no-undef
+  2323:10   warning  'filterCheck' is defined but never used            no-unused-vars
+  2337:28   warning  'pltn' is assigned a value but never used          no-unused-vars
+  2337:39   warning  'pltd' is assigned a value but never used          no-unused-vars
+  2338:18   warning  'math' is not defined                              no-undef
+  2338:26   warning  'math' is not defined                              no-undef
+  2349:21   warning  'i' is already defined                             no-redeclare
+  2358:21   warning  'i' is already defined                             no-redeclare
+  2367:21   warning  'i' is already defined                             no-redeclare
+  2376:21   warning  'i' is already defined                             no-redeclare
+  2385:21   warning  'i' is already defined                             no-redeclare
+  2396:21   warning  'i' is already defined                             no-redeclare
+  2407:21   warning  'i' is already defined                             no-redeclare
+  2418:21   warning  'i' is already defined                             no-redeclare
+  2427:21   warning  'i' is already defined                             no-redeclare
+  2438:21   warning  'i' is already defined                             no-redeclare
+  2449:21   warning  'i' is already defined                             no-redeclare
+  2460:21   warning  'i' is already defined                             no-redeclare
+  2469:21   warning  'i' is already defined                             no-redeclare
+  2480:21   warning  'i' is already defined                             no-redeclare
+  2491:21   warning  'i' is already defined                             no-redeclare
+  2501:9    warning  'lp' is assigned a value but never used            no-unused-vars
+  2502:9    warning  'hp' is assigned a value but never used            no-unused-vars
+  2520:17   warning  'element' is already defined                       no-redeclare
+  2530:17   warning  'element' is already defined                       no-redeclare
+  2537:17   warning  'element' is already defined                       no-redeclare
+  2565:5    warning  'Plotly' is not defined                            no-undef
+  2576:13   warning  'update' is already defined                        no-redeclare
+  2582:5    warning  'Plotly' is not defined                            no-undef
+
+✖ 234 problems (0 errors, 234 warnings)
+

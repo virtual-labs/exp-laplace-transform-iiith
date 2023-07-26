@@ -1,0 +1,33 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "For a stable system, the Laplace transform of the impulse response has ROC which ",
+      "answers": {
+        "a": "includes the unit circle ",
+        "b": "is outside the unit circle ",
+        "c": "includes the imaginary axis ",
+        "d": "includes the entire s-plane "
+      },
+      "explanations": {
+        "explanations": "includes the imaginary axis "
+      },
+      "correctAnswer": "c",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "For a causal system, the Laplace transform of the impulse response has ROC which ",
+      "answers": {
+        "a": "is to the right of the rightmost pole ",
+        "b": "includes the imaginary axis  ",
+        "c": "is the entire s-plane  ",
+        "d": "includes the unit circle  "
+      },
+      "explanations": {
+        "explanations": "is to the right of the rightmost pole "
+      },
+      "correctAnswer": "a",
+      "difficulty": "Easy"
+    }
+  ]
+}
