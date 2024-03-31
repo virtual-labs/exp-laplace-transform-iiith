@@ -38,6 +38,36 @@ function openPart(evt, name) {
     }
     document.getElementById(name).style.display = "block";
     evt.currentTarget.className += " active";
+
+    if(!name.localeCompare('ROCB'))
+    {
+        ROCNumberInit();
+        allROCNumberInit();
+        renderMathInElement(document.body);
+    }
+    /*else if(!name.localeCompare('PLA'))
+    {
+        polyInit();
+    }*/
+    else if(!name.localeCompare('SYS'))
+    {
+        StabilityInit();
+    }
+    else if(!name.localeCompare('SP'))
+    {
+        sPlaneInit();
+        renderMathInElement(document.body);
+    }
+    else if(!name.localeCompare('SPI'))
+    {
+        sPlaneInitI();
+        renderMathInElement(document.body);
+    }
+    else
+    {
+        filteringInit();
+        renderMathInElement(document.body);
+    }
 }
 
 // --------------------------------------- Add dynamic boxes --------------------------------------------------
@@ -2597,14 +2627,6 @@ function makeArr(startValue, stopValue, cardinality) {
 
 function startup()
 {
-    sPlaneInit();
-    ROCNumberInit();
-    allROCNumberInit();
-    //polyInit();
-    sPlaneInitI();
-    StabilityInit();
-    filteringInit();
-    //stabilityInit();
     document.getElementById("default").click();
 }
 
