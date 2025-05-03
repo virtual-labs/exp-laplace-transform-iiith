@@ -19,7 +19,7 @@ $Im\{e^{-s t}\} =  - e^{-\sigma t} \sin(\omega t)$
 
 Let the system $h(t)$ be a linear and time invariant (LTI) system and the input $\text{x}(t) = e^{st}$. The output $\text{y}(t)$ of this system can be written as 
 
- <p align="center"><img src="Block_diag_1.drawio.png" alt="drawing" width="300"/>
+ <p align="center"><img src="images/Block_diag_1.drawio.png" alt="drawing" width="300"/>
 
 $ \text{y}(t) = e^{st} * h(t) $
 
@@ -64,7 +64,7 @@ $~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~= \frac{1}{s+1} $
 
 * The expression is valid if $Re{\{s+1\}} > 0$   i.e. $Re{\{s\}} > -1$. $ s = -1$ is a point of singularity. 
 
- <p align="center"><img src="roc1.png" alt="drawing" width="300"/>
+ <p align="center"><img src="images/roc1.png" alt="drawing" width="300"/>
 
  Let $\text{X}(s)$ be the polynomials in $s$ variable as below: 
 
@@ -79,7 +79,7 @@ Note: Poles play important role to decide ROC nit ROC cannot have poles within t
 ## Exercise: ##
 
  What is the ROC in above example? 
-  <p align="center"><img src="roc2.png" alt="drawing" width="300"/>
+  <p align="center"><img src="images/roc2.png" alt="drawing" width="300"/>
 
 ## Linear constant coefficient differential equations (LCCDE): ##  
 
@@ -102,7 +102,7 @@ Here $\text{H}(s)$ is known as transfer function or system function.
 ## Application of Laplace transform for system analysis – Causality and stability  ## 
 
 
-<p align="center"><img src="Block_diag_1.drawio.png" alt="drawing" width="300"/>
+<p align="center"><img src="images/Block_diag_1.drawio.png" alt="drawing" width="300"/>
 
 
 Let $h(t)$ be the system with input $\text{x}(t)$ and output being $\text{y}(t)$.  
@@ -186,13 +186,13 @@ Let $ \text{H}(s) = \frac{1}{s+1} $
 
 The pole-zero plot on $s$-plane is  
 
-<p align="center"><img src="roc3.png" alt="drawing" width="300"/>
+<p align="center"><img src="images/roc3.png" alt="drawing" width="300"/>
 
 Evaluating $\text{H}(s)$ at any point at $s = s_0$ in the $s$-plane 
 
 $\text{H}(s)|_{s=s_0} = \frac{1}{s_0 +1}$ 
 
-<p align="center"><img src="roc4.png" alt="drawing" width="300"/>
+<p align="center"><img src="images/roc4.png" alt="drawing" width="300"/>
 
 $\text{H}(s)|_{s=s_0} = |\text{H}(s_0)| e^{j\angle \text{H}(s_0)}$ 
 
