@@ -10,7 +10,7 @@
         "d": "includes the entire s-plane "
       },
       "explanations": {
-        "explanations": "includes the imaginary axis "
+        "c": "The ROC for a stable system must include the imaginary axis."
       },
       "correctAnswer": "c",
       "difficulty": "Easy"
@@ -24,7 +24,7 @@
         "d": "includes the unit circle  "
       },
       "explanations": {
-        "explanations": "is to the right of the rightmost pole "
+        "a": "For causality, the ROC is to the right of the rightmost pole."
       },
       "correctAnswer": "a",
       "difficulty": "Easy"
