@@ -2,46 +2,57 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "Which of the following signals will have a left-sided ROC for their Laplace transform? ",
+      "question": "Which of the following signals will have a left-sided ROC for their Laplace transform?",
       "answers": {
-        "a": "u(-t) ",
-        "b": "sin(t)",
-        "c": "u(4-t)",
-        "d": "|sin(t)|"
+        "a": "$u(-t)$",
+        "b": "$\\sin(t)$",
+        "c": "$u(t-4)$",
+        "d": "$|\\sin(t)|$"
       },
       "explanations": {
-        "explanations": "a and c"
+        "a": "$u(-t)$ is left-sided, so its Laplace transform has a left-sided ROC."
       },
-      "correctAnswer": "a and c",
-      "difficulty": "Advance"
+      "correctAnswer": "a",
+      "difficulty": "Advanced"
     },
     {
-      "question": "Select the correct statement(s) from below for the system function X(s) = (s + 1)/(s - 1) ",
+      "question": "Select the correct statement from below for the system function $X(s) = \\frac{(s + 1)}{(s - 1)}$",
       "answers": {
-        "a": "system can be causal  ",
+        "a": "system can be causal",
         "b": "system can be stable",
-        "c": "system can be both causal & stable ",
+        "c": "system can be both causal & stable",
         "d": "cannot say"
       },
       "explanations": {
-        "explanations": "a and b"
+        "a": "The system can be causal depending on the ROC."
       },
-      "correctAnswer": "a and b",
-      "difficulty": "Advance"
+      "correctAnswer": "a",
+      "difficulty": "Advanced"
     },
     {
-      "question": "A system function is of the form H(s) = (s-a)/(s-b), where a is not equal to b and they are real numbers. This system can be both stable and causal if  ",
+      "question": "A system function is of the form $H(s) = \\frac{(s-a)}{(s-b)}$, where $a$ is not equal to $b$ and they are real numbers. This system can be both stable and causal if",
       "answers": {
-        "a": "a > 0  ",
-        "b": "a < 0 ",
-        "c": "b > 0 ",
-        "d": "b < 0 "
+        "a": "$a > 0$",
+        "b": "$a < 0$",
+        "c": "$b > 0$",
+        "d": "$b < 0$"
       },
       "explanations": {
-        "explanations": "d"
+        "d": "For stability and causality, all poles should be less than zero. Thus, $b < 0$ is required."
       },
       "correctAnswer": "d",
-      "difficulty": "Advance"
+      "difficulty": "Advanced"
+    },
+    {
+      "question": "The system with transfer function $H(s) = \\frac{1}{(s+0.2)}$, would behave as the following filter?",
+      "answers": {
+        "a": "low pass",
+        "b": "high pass",
+        "c": "band pass",
+        "d": "none of these"
+      },
+      "correctAnswer": "a",
+      "difficulty": "Advanced"
     }
   ]
 }

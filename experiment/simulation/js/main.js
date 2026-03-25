@@ -1,3 +1,10 @@
+// TODO: Show answer option for number of ROCs, after 5 failed attempted
+// TODO: changing tab from other tab to ROC shows some default [R1, R2] weird
+// TODO: in the ROC section when user write Inf make sure it gives correct answer if that is actually the answer and add that in instructions as well
+// TODO: improve logic of checking high or a low pass, use energy based heuristics
+// TODO: Plot for filtering needs to change as it's supposed to be -inf to inf instead of just showign the -pi to pi
+// TODO: rename s-plane to Pole-Zero and Magnitude Response (Imaginary/Real)
+// TODO: tell user than b and d should be < 10 and we will plot from -20 to 20
 // ------------------------------------------- Global Declarations ------------------------------------------
 
 var k;
@@ -30,57 +37,75 @@ function openPart(evt, name) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
+        tabcontent[i].style.display = "none";
     }
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(name).style.display = "block";
     evt.currentTarget.className += " active";
+
+    if (!name.localeCompare('ROCB')) {
+        ROCNumberInit();
+        allROCNumberInit();
+        renderMathInElement(document.body);
+    }
+    /*else if(!name.localeCompare('PLA'))
+    {
+        polyInit();
+    }*/
+    else if (!name.localeCompare('SYS')) {
+        StabilityInit();
+    }
+    else if (!name.localeCompare('SP')) {
+        sPlaneInit();
+        renderMathInElement(document.body);
+    }
+    else if (!name.localeCompare('SPI')) {
+        sPlaneInitI();
+        renderMathInElement(document.body);
+    }
+    else {
+        filteringInit();
+        renderMathInElement(document.body);
+    }
 }
 
 // --------------------------------------- Add dynamic boxes --------------------------------------------------
 
-function add_field()
-{
-    if(uniquenumberofsignals>=10)
-    {
+function add_field() {
+    if (uniquenumberofsignals >= 10) {
         return;
     }
     numberofsignals += 1;
     uniquenumberofsignals += 1;
-  document.getElementById("field_div").innerHTML=document.getElementById("field_div").innerHTML+
-  "<p id='input_num"+numberofsignals+"_wrapper'><input type='text' class='input_text' id='ROC_"+numberofsignals+"' placeholder='[R1 , R2]'></p>";
+    document.getElementById("field_div").innerHTML = document.getElementById("field_div").innerHTML +
+        "<p id='input_num" + numberofsignals + "_wrapper'><input type='text' class='input_text' id='ROC_" + numberofsignals + "' placeholder='[R1 , R2]'></p>";
 }
-function remove_field(id1)
-{
+function remove_field(id1) {
     uniquenumberofsignals -= 1;
-    const element = document.getElementById(id1+"_wrapper");
+    const element = document.getElementById(id1 + "_wrapper");
     element.remove();
 }
 
 // ---------------------------------------------- FFT --------------------------------------------------------------
 
-function fourier(waveform){
+function fourier(waveform) {
     var N = waveform.length;
     var ft = [];
-    
-    for(var k=0; k<N; k++)
-    {
-        var sum = math.complex(0,0);
-        for(var n=0; n<N; n++)
-        {
-            sum = math.add(sum,(math.multiply(waveform[n],math.complex(Math.cos(2*Math.PI*k*n/N),-Math.sin(2*Math.PI*k*n/N)))));
+
+    for (var k = 0; k < N; k++) {
+        var sum = math.complex(0, 0);
+        for (var n = 0; n < N; n++) {
+            sum = math.add(sum, (math.multiply(waveform[n], math.complex(Math.cos(2 * Math.PI * k * n / N), -Math.sin(2 * Math.PI * k * n / N)))));
         }
-        if(math.re(sum)<1e-10)
-        {
-            var sum1 = math.complex(0,math.im(sum));
+        if (math.re(sum) < 1e-10) {
+            var sum1 = math.complex(0, math.im(sum));
             sum = sum1;
         }
-        if(math.im(sum)<1e-10)
-        {
-            var sum1 = math.complex(math.re(sum),0);
+        if (math.im(sum) < 1e-10) {
+            var sum1 = math.complex(math.re(sum), 0);
             sum = sum1;
         }
         ft.push(sum);
@@ -88,25 +113,21 @@ function fourier(waveform){
     return ft;
 }
 
-function invFourier(waveform){
+function invFourier(waveform) {
     var N = waveform.length;
     var ft = [];
-    
-    for(var k=0; k<N; k++)
-    {
-        var sum = math.complex(0,0);
-        for(var n=0; n<N; n++)
-        {
-            sum = math.add(sum,math.complex(math.re(waveform[n])*Math.cos(2*Math.PI*k*n/N)/N - math.im(waveform[n])*Math.sin(2*Math.PI*k*n/N)/N,math.re(waveform[n])*Math.sin(2*Math.PI*k*n/N)/N + math.im(waveform[n])*Math.cos(2*Math.PI*k*n/N)/N));
+
+    for (var k = 0; k < N; k++) {
+        var sum = math.complex(0, 0);
+        for (var n = 0; n < N; n++) {
+            sum = math.add(sum, math.complex(math.re(waveform[n]) * Math.cos(2 * Math.PI * k * n / N) / N - math.im(waveform[n]) * Math.sin(2 * Math.PI * k * n / N) / N, math.re(waveform[n]) * Math.sin(2 * Math.PI * k * n / N) / N + math.im(waveform[n]) * Math.cos(2 * Math.PI * k * n / N) / N));
         }
-        if(math.re(sum)<1e-10)
-        {
-            var sum1 = math.complex(0,math.im(sum));
+        if (math.re(sum) < 1e-10) {
+            var sum1 = math.complex(0, math.im(sum));
             sum = sum1;
         }
-        if(math.im(sum)<1e-10)
-        {
-            var sum1 = math.complex(math.re(sum),0);
+        if (math.im(sum) < 1e-10) {
+            var sum1 = math.complex(math.re(sum), 0);
             sum = sum1;
         }
         ft.push(sum);
@@ -114,16 +135,14 @@ function invFourier(waveform){
     return ft;
 }
 
-function shift(signal){
+function shift(signal) {
     var N = signal.length;
-    var cut = parseInt(N/2);
+    var cut = parseInt(N / 2);
     var out = [];
-    for(var i=cut+1; i<N; i++)
-    {
+    for (var i = cut + 1; i < N; i++) {
         out.push(signal[i]);
     }
-    for(var i=0; i<=cut; i++)
-    {
+    for (var i = 0; i <= cut; i++) {
         out.push(signal[i]);
     }
     return out;
@@ -131,8 +150,8 @@ function shift(signal){
 
 // ----------------------------------- Pole Zero ---------------------------------------------
 
-function sPlaneInit(){
-    
+function sPlaneInit() {
+
     var a = document.getElementById("fillSec11").value;
     a = parseFloat(a);
     var b = document.getElementById("fillSec12").value;
@@ -148,28 +167,22 @@ function sPlaneInit(){
 
     var numerator = [];
     var denominator = [];
-    if(a!=d && a!=e && a!=f)
-    {
+    if (a != d && a != e && a != f) {
         numerator.push(a);
     }
-    if(b!=d && b!=e && b!=f)
-    {
+    if (b != d && b != e && b != f) {
         numerator.push(b);
     }
-    if(c!=d && c!=e && c!=f)
-    {
+    if (c != d && c != e && c != f) {
         numerator.push(c);
     }
-    if(d!=a && d!=b && d!=c)
-    {
+    if (d != a && d != b && d != c) {
         denominator.push(d);
     }
-    if(e!=a && e!=b && e!=c)
-    {
+    if (e != a && e != b && e != c) {
         denominator.push(e);
     }
-    if(f!=a && f!=b && f!=c)
-    {
+    if (f != a && f != b && f != c) {
         denominator.push(f);
     }
 
@@ -179,99 +192,80 @@ function sPlaneInit(){
 
     var len = 100;
     var w = [], plty = [], pltn = [], pltd = [];
-    w = makeArr(-math.PI,math.PI,len);
+    w = makeArr(-20, 20, len);
 
     // Numerator Calculation
 
-    if(ln==0)
-    {
-        for(var i=0; i<len; i++)
-        {
+    if (ln == 0) {
+        for (var i = 0; i < len; i++) {
             pltn.push(1);
         }
     }
-    else if(ln==1)
-    {
+    else if (ln == 1) {
         var a1 = numerator[0];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push(w[i]*w[i] + a1*a1);
+        for (var i = 0; i < len; i++) {
+            pltn.push(w[i] * w[i] + a1 * a1);
         }
     }
-    else if(ln==2)
-    {
+    else if (ln == 2) {
         var a1 = numerator[0];
         var b1 = numerator[1];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1));
+        for (var i = 0; i < len; i++) {
+            pltn.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1));
         }
     }
-    else if(ln==3)
-    {
+    else if (ln == 3) {
         var a1 = numerator[0];
         var b1 = numerator[1];
         var c1 = numerator[2];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1)*(w[i]*w[i] + c1*c1));
+        for (var i = 0; i < len; i++) {
+            pltn.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1) * (w[i] * w[i] + c1 * c1));
         }
     }
 
     // Denominator Calculation
 
-    if(ld==0)
-    {
-        for(var i=0; i<len; i++)
-        {
+    if (ld == 0) {
+        for (var i = 0; i < len; i++) {
             pltd.push(1);
         }
     }
-    else if(ld==1)
-    {
+    else if (ld == 1) {
         var a1 = denominator[0];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push(w[i]*w[i] + a1*a1);
+        for (var i = 0; i < len; i++) {
+            pltd.push(w[i] * w[i] + a1 * a1);
         }
     }
-    else if(ld==2)
-    {
+    else if (ld == 2) {
         var a1 = denominator[0];
         var b1 = denominator[1];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1));
+        for (var i = 0; i < len; i++) {
+            pltd.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1));
         }
     }
-    else if(ld==3)
-    {
+    else if (ld == 3) {
         var a1 = denominator[0];
         var b1 = denominator[1];
         var c1 = denominator[2];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1)*(w[i]*w[i] + c1*c1));
+        for (var i = 0; i < len; i++) {
+            pltd.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1) * (w[i] * w[i] + c1 * c1));
         }
     }
 
     // Total fraction
 
-    for(var i=0; i<len; i++)
-    {
-        plty.push(pltn[i]/pltd[i]);
+    for (var i = 0; i < len; i++) {
+        plty.push(pltn[i] / pltd[i]);
     }
 
-    for(var i=0; i<ln; i++)
-    {
+    for (var i = 0; i < ln; i++) {
         xn.push(0);
     }
-    for(var i=0; i<ld; i++)
-    {
+    for (var i = 0; i < ld; i++) {
         xd.push(0);
     }
 
-    
+
     var trace1 = {
         x: numerator,
         y: xn,
@@ -303,11 +297,11 @@ function sPlaneInit(){
         type: 'scatter',
         mode: 'line',
     };
-      
+
     var data = [trace1, trace2];
     var data1 = [trace3];
 
-    var config = {responsive: true}
+    var config = { responsive: true }
     var layout1 = {
         title: '|H(s)|',
         showlegend: false,
@@ -319,7 +313,7 @@ function sPlaneInit(){
         }
     };
     var layout2 = {
-        title: 's-Plane',
+        title: 'Pole-Zero',
         showlegend: false,
         shapes: [{
             type: 'line',
@@ -329,25 +323,45 @@ function sPlaneInit(){
             yref: 'paper',
             y1: 1,
             line: {
-              width: 2,
-              dash: 'dot'
+                width: 2,
+                dash: 'dot'
             }
         }]
     };
-      
+
     Plotly.newPlot('figure1', data, layout2, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure1', update);
     Plotly.newPlot('figure2', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure2', update);
-    
+    /*
     ln = numerator.length;
     ld = denominator.length;
     var message = "$ \frac{";
@@ -363,16 +377,16 @@ function sPlaneInit(){
     {
         message += "(s-" + denominator[i] + ") ";
     }
-    
+
     message += "} $";
 
     var element = document.getElementById("result4")
     element.style.color = "#000000";
     element.style.fontWeight = "bold";
-    element.innerHTML = message;
+    element.innerHTML = message;*/
 }
 
-function sPlane(){
+function sPlane() {
     var a = document.getElementById("fillSec11").value;
     a = parseFloat(a);
     var b = document.getElementById("fillSec12").value;
@@ -388,31 +402,25 @@ function sPlane(){
 
     var numerator = [];
     var denominator = [];
-    if(!isNaN(a) && a!=d && a!=e && a!=f)
-    {
+    if (!isNaN(a) && a != d && a != e && a != f) {
         numerator.push(a);
     }
-    if(!isNaN(b) && b!=d && b!=e && b!=f)
-    {
+    if (!isNaN(b) && b != d && b != e && b != f) {
         numerator.push(b);
     }
-    if(!isNaN(c) && c!=d && c!=e && c!=f)
-    {
+    if (!isNaN(c) && c != d && c != e && c != f) {
         numerator.push(c);
     }
-    if(!isNaN(d) && d!=a && d!=b && d!=c)
-    {
+    if (!isNaN(d) && d != a && d != b && d != c) {
         denominator.push(d);
     }
-    if(!isNaN(e) && e!=a && e!=b && e!=c)
-    {
+    if (!isNaN(e) && e != a && e != b && e != c) {
         denominator.push(e);
     }
-    if(!isNaN(f) && f!=a && f!=b && f!=c)
-    {
+    if (!isNaN(f) && f != a && f != b && f != c) {
         denominator.push(f);
     }
-    
+
     /*
     console.log(numerator);
     console.log(denominator);
@@ -424,99 +432,80 @@ function sPlane(){
 
     var len = 100;
     var w = [], plty = [], pltn = [], pltd = [];
-    w = makeArr(-math.PI,math.PI,len);
+    w = makeArr(-20, 20, len);
 
     // Numerator Calculation
 
-    if(ln==0)
-    {
-        for(var i=0; i<len; i++)
-        {
+    if (ln == 0) {
+        for (var i = 0; i < len; i++) {
             pltn.push(1);
         }
     }
-    else if(ln==1)
-    {
+    else if (ln == 1) {
         var a1 = numerator[0];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push(w[i]*w[i] + a1*a1);
+        for (var i = 0; i < len; i++) {
+            pltn.push(w[i] * w[i] + a1 * a1);
         }
     }
-    else if(ln==2)
-    {
+    else if (ln == 2) {
         var a1 = numerator[0];
         var b1 = numerator[1];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1));
+        for (var i = 0; i < len; i++) {
+            pltn.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1));
         }
     }
-    else if(ln==3)
-    {
+    else if (ln == 3) {
         var a1 = numerator[0];
         var b1 = numerator[1];
         var c1 = numerator[2];
-        for(var i=0; i<len; i++)
-        {
-            pltn.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1)*(w[i]*w[i] + c1*c1));
+        for (var i = 0; i < len; i++) {
+            pltn.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1) * (w[i] * w[i] + c1 * c1));
         }
     }
 
     // Denominator Calculation
 
-    if(ld==0)
-    {
-        for(var i=0; i<len; i++)
-        {
+    if (ld == 0) {
+        for (var i = 0; i < len; i++) {
             pltd.push(1);
         }
     }
-    else if(ld==1)
-    {
+    else if (ld == 1) {
         var a1 = denominator[0];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push(w[i]*w[i] + a1*a1);
+        for (var i = 0; i < len; i++) {
+            pltd.push(w[i] * w[i] + a1 * a1);
         }
     }
-    else if(ld==2)
-    {
+    else if (ld == 2) {
         var a1 = denominator[0];
         var b1 = denominator[1];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1));
+        for (var i = 0; i < len; i++) {
+            pltd.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1));
         }
     }
-    else if(ld==3)
-    {
+    else if (ld == 3) {
         var a1 = denominator[0];
         var b1 = denominator[1];
         var c1 = denominator[2];
-        for(var i=0; i<len; i++)
-        {
-            pltd.push((w[i]*w[i] + a1*a1)*(w[i]*w[i] + b1*b1)*(w[i]*w[i] + c1*c1));
+        for (var i = 0; i < len; i++) {
+            pltd.push((w[i] * w[i] + a1 * a1) * (w[i] * w[i] + b1 * b1) * (w[i] * w[i] + c1 * c1));
         }
     }
 
     // Total fraction
 
-    for(var i=0; i<len; i++)
-    {
-        plty.push(pltn[i]/pltd[i]);
+    for (var i = 0; i < len; i++) {
+        plty.push(pltn[i] / pltd[i]);
     }
 
-    for(var i=0; i<ln; i++)
-    {
+    for (var i = 0; i < ln; i++) {
         xn.push(0);
     }
-    for(var i=0; i<ld; i++)
-    {
+    for (var i = 0; i < ld; i++) {
         xd.push(0);
     }
 
-    
+
     var trace1 = {
         x: numerator,
         y: xn,
@@ -548,11 +537,11 @@ function sPlane(){
         type: 'scatter',
         mode: 'line'
     };
-      
+
     var data = [trace1, trace2];
     var data1 = [trace3];
 
-    var config = {responsive: true}
+    var config = { responsive: true }
     var layout1 = {
         title: '|H(s)|',
         showlegend: false,
@@ -564,7 +553,7 @@ function sPlane(){
         }
     };
     var layout2 = {
-        title: 's-Plane',
+        title: 'Pole-Zero',
         showlegend: false,
         shapes: [{
             type: 'line',
@@ -574,41 +563,59 @@ function sPlane(){
             yref: 'paper',
             y1: 1,
             line: {
-              width: 2,
-              dash: 'dot'
+                width: 2,
+                dash: 'dot'
             }
         }]
     };
-      
+
     Plotly.newPlot('figure1', data, layout2, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure1', update);
     Plotly.newPlot('figure2', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure2', update);
-    
+
     ln = numerator.length;
     ld = denominator.length;
     var message = "$ \frac{";
 
-    for(var i=0; i<ln; i++)
-    {
+    for (var i = 0; i < ln; i++) {
         message += "(s-" + numerator[i] + ") ";
     }
 
     message += "}{";
 
-    for(var i=0; i<ld; i++)
-    {
+    for (var i = 0; i < ld; i++) {
         message += "(s-" + denominator[i] + ") ";
     }
-    
+
     message += "} $";
 
     var element = document.getElementById("result4")
@@ -619,108 +626,68 @@ function sPlane(){
 
 // -------------------------------------- Separate CSV -----------------------------------------------------------
 
-function separate(input,select)
-{
-    var l = input.length;
-    var temp = "";
+function separate(input, select) {
+    if (!input) return [];
+    input = input.replace(/\[/g, '').replace(/\]/g, '');
+    var parts = input.split(',');
     var final = [];
-    for(var i=0; i<l; i++)
-    {
-        if(input[i]==',')
-        {
-            var h;
-            if(temp=="Inf")
-            {
-                h = 99999;
-            }
-            if(temp=="-Inf")
-            {
-                h = -99999;
-            }
-            if(select==1)
-            {
+
+    for (var i = 0; i < parts.length; i++) {
+        var temp = parts[i].trim();
+        var upperTemp = temp.toUpperCase();
+        var h;
+
+        if (upperTemp === "INF" || upperTemp === "+INF" || upperTemp === "INFINITY" || upperTemp === "+INFINITY") {
+            h = 99999;
+        } else if (upperTemp === "-INF" || upperTemp === "-INFINITY") {
+            h = -99999;
+        } else {
+            if (select == 1) {
                 h = parseInt(temp);
-            }
-            else
-            {
+            } else {
                 h = parseFloat(temp);
             }
-            final.push(h);
-            temp = "";
         }
-        else
-        {
-            temp = temp + input[i];
-        }
+        final.push(h);
     }
-    if(select==1)
-    {
-        var o = parseInt(temp);
-        final.push(o);
-        if(temp=="Inf")
-        {
-            o = 99999;
-        }
-        if(temp=="-Inf")
-        {
-            o = -99999;
-        }
-    }
-    else
-    {
-        var o = parseFloat(temp);
-        final.push(o);
-        if(temp=="Inf")
-        {
-            o = 99999;
-        }
-        if(temp=="-Inf")
-        {
-            o = -99999;
-        }
-    }
+
     return final;
 }
 
 // -------------------------------------- ROC Number -------------------------------------------------
 
-function ROCCalc(all)
-{
+function ROCCalc(all) {
     var unique = all.filter((item, i, ar) => ar.indexOf(item) === i);
-    unique.sort(function(a,b){return a - b});
+    unique.sort(function (a, b) { return a - b });
     return unique;
 }
 
-function ROCNumberInit(){
+function ROCNumberInit() {
 
-    var numPoles = Math.floor(Math.random()*4)+1;
-    
-    var a = 3*Math.random()-1.5;
-    var b = 3*Math.random()-1.5;
-    var c = 3*Math.random()-1.5;
-    var d = 3*Math.random()-1.5;
-    var e = 3*Math.random()-1.5;
-    var f = 3*Math.random()-1.5;
+    var numPoles = Math.floor(Math.random() * 4) + 1;
+
+    var a = 3 * Math.random() - 1.5;
+    var b = 3 * Math.random() - 1.5;
+    var c = 3 * Math.random() - 1.5;
+    var d = 3 * Math.random() - 1.5;
+    var e = 3 * Math.random() - 1.5;
+    var f = 3 * Math.random() - 1.5;
 
     var all = [];
 
-    if(numPoles==1)
-    {
+    if (numPoles == 1) {
         all.push(c);
     }
-    else if(numPoles==2)
-    {
+    else if (numPoles == 2) {
         all.push(c);
         all.push(d);
     }
-    else if(numPoles==3)
-    {
+    else if (numPoles == 3) {
         all.push(c);
         all.push(d);
         all.push(e);
     }
-    else
-    {
+    else {
         all.push(c);
         all.push(d);
         all.push(e);
@@ -729,108 +696,84 @@ function ROCNumberInit(){
 
     var numerator = [];
     var denominator = [];
-    if(numPoles==1)
-    {
-        if(Math.abs(a-c)>0.01)
-        {
+    if (numPoles == 1) {
+        if (Math.abs(a - c) > 0.01) {
             numerator.push(a);
         }
-        if(Math.abs(b-c)>0.01)
-        {
+        if (Math.abs(b - c) > 0.01) {
             numerator.push(b);
         }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
             denominator.push(c);
         }
     }
-    else if(numPoles==2)
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01)
-        {
+    else if (numPoles == 2) {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01) {
             numerator.push(a);
         }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01)
-        {
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01) {
             numerator.push(b);
         }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
             denominator.push(c);
         }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
             denominator.push(d);
         }
     }
-    else if(numPoles==3)
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01 && Math.abs(a-e)>0.01)
-        {
+    else if (numPoles == 3) {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01 && Math.abs(a - e) > 0.01) {
             numerator.push(a);
         }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01 && Math.abs(b-e)>0.01)
-        {
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01 && Math.abs(b - e) > 0.01) {
             numerator.push(b);
         }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
             denominator.push(c);
         }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
             denominator.push(d);
         }
-        if(Math.abs(a-e)>0.01 && Math.abs(b-e)>0.01)
-        {
+        if (Math.abs(a - e) > 0.01 && Math.abs(b - e) > 0.01) {
             denominator.push(e);
         }
     }
-    else
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01 && Math.abs(a-e)>0.01 && Math.abs(a-f)>0.01)
-        {
+    else {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01 && Math.abs(a - e) > 0.01 && Math.abs(a - f) > 0.01) {
             numerator.push(a);
         }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01 && Math.abs(b-e)>0.01 && Math.abs(b-f)>0.01)
-        {
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01 && Math.abs(b - e) > 0.01 && Math.abs(b - f) > 0.01) {
             numerator.push(b);
         }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
             denominator.push(c);
         }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
             denominator.push(d);
         }
-        if(Math.abs(a-e)>0.01 && Math.abs(b-e)>0.01)
-        {
+        if (Math.abs(a - e) > 0.01 && Math.abs(b - e) > 0.01) {
             denominator.push(e);
         }
-        if(Math.abs(a-f)>0.01 && Math.abs(b-f)>0.01)
-        {
+        if (Math.abs(a - f) > 0.01 && Math.abs(b - f) > 0.01) {
             denominator.push(f);
         }
     }
 
     poles = ROCCalc(denominator);
     console.log(poles);
-    var mine = poles.length+1;
+    var mine = poles.length + 1;
     ROCNum = mine;
 
     var ln = numerator.length;
     var xn = [], xd = [];
     var ld = denominator.length;
-    for(var i=0; i<ln; i++)
-    {
+    for (var i = 0; i < ln; i++) {
         xn.push(0);
     }
-    for(var i=0; i<ld; i++)
-    {
+    for (var i = 0; i < ld; i++) {
         xd.push(0);
     }
-    
+
     var layout = {
         title: 's-plane',
         showlegend: false,
@@ -842,13 +785,13 @@ function ROCNumberInit(){
             yref: 'paper',
             y1: 1,
             line: {
-              width: 2,
-              dash: 'dot'
+                width: 2,
+                dash: 'dot'
             }
         }]
     };
 
-    
+
     var trace1 = {
         x: numerator,
         y: xn,
@@ -875,32 +818,56 @@ function ROCNumberInit(){
         }
     };
 
-      
+
     var data = [trace1, trace2];
-    var config = {responsive: true}
-      
+    var config = { responsive: true }
+
     Plotly.newPlot('figure3', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure3', update);
     /*Plotly.newPlot('figure4', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+
+    if(screen.width < 400)
+    {
+        var update = {
+            width: 0.7*screen.width,
+            height: 400
+        };
+    }
+    else
+    {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure4', update);*/
 }
 
-function ROCNumber(){
+var failedRocAttempts = 0;
+
+function ROCNumber() {
 
     var ans = document.getElementById("fillSec21").value;
     ans = parseInt(ans);
 
     var mine = ROCNum;
-    if(ans==mine)
-    {
+    if (ans == mine) {
+        failedRocAttempts = 0;
         var element = document.getElementById("result2")
         element.style.color = "#006400";
         element.style.fontWeight = "bold";
@@ -914,61 +881,96 @@ function ROCNumber(){
             x.style.display = "block";
         }
     }
-    else
-    {
+    else {
+        failedRocAttempts++;
         var element = document.getElementById("result2")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
         element.innerHTML = 'Wrong Answer!';
+
+        if (failedRocAttempts >= 5) {
+            document.getElementById("showAnswerBtn").style.display = "block";
+        }
+
         var x = document.getElementById("wrapper");
         if (x.style.display === "none") {
             //x.style.display = "block";
         }
-        else
-        {
+        else {
             x.style.display = "none";
         }
         x = document.getElementById("buttonSec32");
         if (x.style.display === "none") {
             //x.style.display = "block";
         }
-        else
-        {
+        else {
             x.style.display = "none";
         }
     }
 }
 
-// ------------------------------------------ ROC Lists ----------------------------------------------------------
+function showAnswer() {
+    var element = document.getElementById("result2");
+    element.style.color = "#0000FF";
+    element.innerHTML = 'Correct Number of ROCs: ' + ROCNum;
 
-function allROCNumberInit()
-{
-    for(var i=0; i<ROCNum; i++)
-    {
-        document.getElementById("buttonSec31").click();
+    var fillSec21 = document.getElementById("fillSec21");
+    if (fillSec21) {
+        fillSec21.value = ROCNum;
     }
-    myFunction();
+
+    var wrapper = document.getElementById("wrapper");
+    if (wrapper) {
+        wrapper.style.display = "block";
+    }
+
+    var buttonSec32 = document.getElementById("buttonSec32");
+    if (buttonSec32) {
+        buttonSec32.style.display = "block";
+    }
+
+    var showAnswerBtn = document.getElementById("showAnswerBtn");
+    if (showAnswerBtn) {
+        showAnswerBtn.style.display = "none";
+    }
 }
 
-function myFunction() {
-    var x = document.getElementById("buttonSec31");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
+// ------------------------------------------ ROC Lists ----------------------------------------------------------
+
+function allROCNumberInit() {
+    document.getElementById("field_div").innerHTML = "";
+    numberofsignals = 0;
+    uniquenumberofsignals = 0;
+    for (var i = 0; i < ROCNum; i++) {
+        document.getElementById("buttonSec31").click();
     }
-    x = document.getElementById("wrapper");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
+
+    document.getElementById("buttonSec31").style.display = "none";
+    document.getElementById("wrapper").style.display = "none";
+    document.getElementById("buttonSec32").style.display = "none";
+
+    var showAnswerBtn = document.getElementById("showAnswerBtn");
+    if (showAnswerBtn) {
+        showAnswerBtn.style.display = "none";
     }
-    x = document.getElementById("buttonSec32");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
+
+    var result2 = document.getElementById("result2");
+    if (result2) {
+        result2.innerHTML = "";
     }
+
+    var fillSec21 = document.getElementById("fillSec21");
+    if (fillSec21) {
+        fillSec21.value = "";
+    }
+
+    var showROCsAnswerBtn = document.getElementById("showROCsAnswerBtn");
+    if (showROCsAnswerBtn) {
+        showROCsAnswerBtn.style.display = "none";
+    }
+
+    failedRocAttempts = 0;
+    failedRocListAttempts = 0;
 }
 
 function createArray(length) {
@@ -977,49 +979,44 @@ function createArray(length) {
 
     if (arguments.length > 1) {
         var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        while (i--) arr[length - 1 - i] = createArray.apply(this, args);
     }
 
     return arr;
 }
 
-function ROCList(){
+var failedRocListAttempts = 0;
 
-    var ROCS = createArray(ROCNum+1,2);
-    for(var i=1; i<=ROCNum; i++)
-    {
-        var ROCString = document.getElementById("ROC_"+i+"").value;
-        var temp = separate(ROCString,2);
-        if(isNaN(temp[1]))
-        {
+function ROCList() {
+
+    var ROCS = createArray(ROCNum + 1, 2);
+    for (var i = 1; i <= ROCNum; i++) {
+        var ROCString = document.getElementById("ROC_" + i + "").value;
+        var temp = separate(ROCString, 2);
+        if (isNaN(temp[1])) {
             temp[1] = 99999;
         }
-        if(isNaN(temp[0]))
-        {
+        if (isNaN(temp[0])) {
             temp[0] = -99999;
         }
-        ROCS[i-1][0] = temp[0];
-        ROCS[i-1][1] = temp[1];
+        ROCS[i - 1][0] = temp[0];
+        ROCS[i - 1][1] = temp[1];
     }
 
 
     var flag = 1;
     var polesNow = [];
-    for(var i=0; i<ROCNum; i++)
-    {
-        if((i==0 && ROCS[i][0]!=-99999) || (i==ROCNum-1 && ROCS[i][1]!=99999))
-        {
+    for (var i = 0; i < ROCNum; i++) {
+        if ((i == 0 && ROCS[i][0] != -99999) || (i == ROCNum - 1 && ROCS[i][1] != 99999)) {
             flag = 0;
             break;
         }
-        if(i!=0)
-        {
-            if(ROCS[i][0]!=ROCS[i-1][1])
-            {
+        if (i != 0) {
+            if (ROCS[i][0] != ROCS[i - 1][1]) {
                 flag = 0;
                 break;
             }
-            polesNow.push(Math.floor(ROCS[i-1][1]*100));
+            polesNow.push(Math.floor(ROCS[i - 1][1] * 100));
         }
     }
 
@@ -1027,63 +1024,113 @@ function ROCList(){
     console.log(poles);
 
     var poles123 = [];
-    for(var i=0; i<ROCNum-1; i++)
-    {
-        if(poles[i]<0)
-        {
-            poles123.push(Math.floor(poles[i]*100)+1);
+    for (var i = 0; i < ROCNum - 1; i++) {
+        if (poles[i] < 0) {
+            poles123.push(Math.floor(poles[i] * 100) + 1);
             continue;
         }
-        poles123.push(Math.floor(poles[i]*100));
+        poles123.push(Math.floor(poles[i] * 100));
     }
 
-    if(flag==0 || l!=ROCNum-1)
-    {
+    if (flag == 0 || l != ROCNum - 1) {
         var element = document.getElementById("result2")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
         element.innerHTML = 'Wrong Answer!';
+
+        failedRocListAttempts++;
+        if (failedRocListAttempts >= 5) {
+            var btn = document.getElementById("showROCsAnswerBtn");
+            if (btn) btn.style.display = "block";
+        }
         return;
     }
 
     console.log(polesNow, poles123);
 
     flag = 1;
-    for(var i=0; i<ROCNum-1; i++)
-    {
-        if(polesNow[i]!=poles123[i])
-        {
+    for (var i = 0; i < ROCNum - 1; i++) {
+        if (polesNow[i] != poles123[i]) {
             flag = 0;
             break;
         }
     }
 
-    if(flag)
-    {
+    if (flag) {
+        failedRocListAttempts = 0;
         var element = document.getElementById("result2")
         element.style.color = "#006400";
         element.style.fontWeight = "bold";
         element.innerHTML = 'Right Answer!';
+
+        var btn = document.getElementById("showROCsAnswerBtn");
+        if (btn) btn.style.display = "none";
     }
-    else
-    {
+    else {
         var element = document.getElementById("result2")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
         element.innerHTML = 'Wrong Answer!';
+
+        failedRocListAttempts++;
+        if (failedRocListAttempts >= 5) {
+            var btn = document.getElementById("showROCsAnswerBtn");
+            if (btn) btn.style.display = "block";
+        }
     }
+}
+
+function showROCsAnswer() {
+    var element = document.getElementById("result2");
+    element.style.color = "#0000FF";
+
+    var rocs = [];
+    var poles123 = [];
+    for (var i = 0; i < ROCNum - 1; i++) {
+        if (poles[i] < 0) {
+            poles123.push(Math.floor(poles[i] * 100) + 1);
+        } else {
+            poles123.push(Math.floor(poles[i] * 100));
+        }
+    }
+
+    if (ROCNum === 1) {
+        rocs.push("[-Inf, Inf]");
+    } else {
+        for (var i = 0; i < ROCNum; i++) {
+            if (i === 0) {
+                rocs.push("[-Inf, " + (poles123[i] / 100) + "]");
+            } else if (i === ROCNum - 1) {
+                rocs.push("[" + (poles123[i - 1] / 100) + ", Inf]");
+            } else {
+                rocs.push("[" + (poles123[i - 1] / 100) + ", " + (poles123[i] / 100) + "]");
+            }
+        }
+    }
+
+    element.innerHTML = 'Correct ROCs: <br>' + rocs.join('<br>');
+
+    // Auto-fill inputs
+    for (var i = 1; i <= ROCNum; i++) {
+        var inputField = document.getElementById("ROC_" + i);
+        if (inputField) {
+            inputField.value = rocs[i - 1];
+        }
+    }
+
+    var btn = document.getElementById("showROCsAnswerBtn");
+    if (btn) btn.style.display = "none";
 }
 
 // ------------------------------------------- Polynomial ----------------------------------------------
 
-function polyInit()
-{
-    var a = 2*Math.random()-1;
-    var b = 2*Math.random()-1;
-    var c = 2*Math.random()-1;
-    var d = 2*Math.random()-1;
-    var e = 2*Math.random()-1;
-    var f = 2*Math.random()-1;
+function polyInit() {
+    var a = 2 * Math.random() - 1;
+    var b = 2 * Math.random() - 1;
+    var c = 2 * Math.random() - 1;
+    var d = 2 * Math.random() - 1;
+    var e = 2 * Math.random() - 1;
+    var f = 2 * Math.random() - 1;
 
     var all = [];
     all.push(Math.abs(c));
@@ -1092,33 +1139,27 @@ function polyInit()
     all.push(Math.abs(f));
 
     var poles123 = ROCCalc(all);
-    var mine = poles123.length+1;
+    var mine = poles123.length + 1;
     ROCNum1 = mine;
 
     var numerator = [];
     var denominator = [];
-    if(a!=c && a!=d && a!=e && a!=f)
-    {
+    if (a != c && a != d && a != e && a != f) {
         numerator.push(a);
     }
-    if(b!=c && b!=d && b!=e && b!=f)
-    {
+    if (b != c && b != d && b != e && b != f) {
         numerator.push(b);
     }
-    if(c!=a && c!=b)
-    {
+    if (c != a && c != b) {
         denominator.push(c);
     }
-    if(d!=a && d!=b)
-    {
+    if (d != a && d != b) {
         denominator.push(d);
     }
-    if(e!=a && e!=b)
-    {
+    if (e != a && e != b) {
         denominator.push(e);
     }
-    if(e!=a && e!=b)
-    {
+    if (e != a && e != b) {
         denominator.push(f);
     }
 
@@ -1128,15 +1169,13 @@ function polyInit()
     var ln = numerator.length;
     var xn = [], xd = [];
     var ld = denominator.length;
-    for(var i=0; i<ln; i++)
-    {
+    for (var i = 0; i < ln; i++) {
         xn.push(0);
     }
-    for(var i=0; i<ld; i++)
-    {
+    for (var i = 0; i < ld; i++) {
         xd.push(0);
     }
-    
+
     var layout = {
         title: 's-plane',
         showlegend: false,
@@ -1148,13 +1187,13 @@ function polyInit()
             yref: 'paper',
             y1: 1,
             line: {
-              width: 2,
-              dash: 'dot'
+                width: 2,
+                dash: 'dot'
             }
         }]
     };
 
-    
+
     var trace1 = {
         x: numerator,
         y: xn,
@@ -1181,28 +1220,36 @@ function polyInit()
         }
     };
 
-      
+
     var data = [trace1, trace2];
-    var config = {responsive: true}
-      
+    var config = { responsive: true }
+
     Plotly.newPlot('figure5', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure5', update);
 }
 
-function poly()
-{
+function poly() {
     var numGiven = document.getElementById("fillSec41").value;
     var denGiven = document.getElementById("fillSec42").value;
 
-    var numGot = separate(numGiven,2);
-    var denGot = separate(denGiven,2);
+    var numGot = separate(numGiven, 2);
+    var denGot = separate(denGiven, 2);
 
-    if(numGot.length != 3 || denGot.length != (5))
-    {
+    if (numGot.length != 3 || denGot.length != (5)) {
         var element = document.getElementById("result3")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
@@ -1220,16 +1267,14 @@ function poly()
     var e = denominator[2];
     var f = denominator[3];
 
-    if((numGot[0]!=(a*b)) || (numGot[1]!=(-1*(a+b))) || (numGot[2]!=1))
-    {
+    if ((numGot[0] != (a * b)) || (numGot[1] != (-1 * (a + b))) || (numGot[2] != 1)) {
         var element = document.getElementById("result3")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
         element.innerHTML = 'Wrong Answer!';
         return;
     }
-    if((Math.floor(denGot[0]*100)!=(Math.floor(c*d*e*f*100))) || (Math.floor(denGot[1]*100)!=Math.floor(-100*(c*d*e + d*e*f + e*f*c + f*c*d))) || (Math.floor(denGot[2]*100)!=Math.floor(100*(c*d + d*e + e*f + f*c + d*f + c*e))) || (Math.floor(denGot[3]*100)!=Math.floor(-100*(c + d + e + f))) || (Math.floor(denGot[4]*100)!=100))
-    {
+    if ((Math.floor(denGot[0] * 100) != (Math.floor(c * d * e * f * 100))) || (Math.floor(denGot[1] * 100) != Math.floor(-100 * (c * d * e + d * e * f + e * f * c + f * c * d))) || (Math.floor(denGot[2] * 100) != Math.floor(100 * (c * d + d * e + e * f + f * c + d * f + c * e))) || (Math.floor(denGot[3] * 100) != Math.floor(-100 * (c + d + e + f))) || (Math.floor(denGot[4] * 100) != 100)) {
         var element = document.getElementById("result3")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
@@ -1241,718 +1286,161 @@ function poly()
     element.style.color = "#006400";
     element.style.fontWeight = "bold";
     element.innerHTML = 'Right Answer!';
-    
+
 }
 
 // ------------------------------------------- Imag s-plane --------------------------------------------
 
-function sPlaneInitI(){
-        
-        var a = document.getElementById("fillSec51").value;
-        a = parseFloat(a);
-        var b = document.getElementById("fillSec52").value;
-        b = parseFloat(b);
-        var c = document.getElementById("fillSec53").value;
-        c = parseFloat(c);
-        var d = document.getElementById("fillSec54").value;
-        d = parseFloat(d);
-    
-        var xn = [], xd = [], yn = [], yd = [];
-    
-        var len = 101;
-        var w = [], plty = [], pltn = [], pltd = [];
-        w = makeArr(-math.PI,math.PI,len);
-    
-        var numeratorR = [];
-        var numeratorI = [];
-        var denominatorR = [];
-        var denominatorI = [];
-        if(isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1);
-            }
-        }
-        else if(isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-       }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-        }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-        }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((b*b-w[i]*w[i])*(b*b-w[i]*w[i]));
-            }
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        
-        var layout = {
-            title: 's-plane',
-            showlegend: false,
-            shapes: [{
-                type: 'line',
-                x0: 0,
-                y0: -0.1,
-                x1: 0,
-                yref: 'paper',
-                y1: 1,
-                line: {
-                  width: 2,
-                  dash: 'dot'
-                }
-            }]
-        };
-    
-        
-        var trace1 = {
-            x: xn,
-            y: yn,
-            type: 'scatter',
-            mode: 'markers',
-            marker: {
-                size: 10,
-                line: {
-                    width: 1
-                }
-            }
-        };
-        var trace2 = {
-            x: xd,
-            y: yd,
-            type: 'scatter',
-            mode: 'markers',
-            marker: {
-                symbol: 'cross',
-                size: 10,
-                line: {
-                    width: 1
-                }
-            }
-        };
-        var trace3 = {
-            x: w,
-            y: plty,
-            type: 'scatter',
-            mode: 'line',
-        };
-          
-        var data = [trace1, trace2];
-        var data1 = [trace3];
-    
-        var config = {responsive: true}
-        var layout1 = {
-            title: '|H(s)|',
-            showlegend: false,
-            xaxis: {
-                title: 'Frequency'
-            },
-            yaxis: {
-                title: 'Magnitude'
-            }
-        };
-          
-        Plotly.newPlot('figure6', data, layout, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
-        Plotly.relayout('figure6', update);
-        Plotly.newPlot('figure7', data1, layout1, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
-        Plotly.relayout('figure7', update);
-}
+function sPlaneInitI() {
 
-function sPlaneI(){
-        
     var a = document.getElementById("fillSec51").value;
-        a = parseFloat(a);
-        var b = document.getElementById("fillSec52").value;
-        b = parseFloat(b);
-        var c = document.getElementById("fillSec53").value;
-        c = parseFloat(c);
-        var d = document.getElementById("fillSec54").value;
-        d = parseFloat(d);
-    
-        var xn = [], xd = [], yn = [], yd = [];
-    
-        var len = 101;
-        var w = [], plty = [], pltn = [], pltd = [];
-        w = makeArr(-math.PI,math.PI,len);
-    
-        var numeratorR = [];
-        var numeratorI = [];
-        var denominatorR = [];
-        var denominatorI = [];
-        if(isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1);
-            }
-        }
-        else if(isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-       }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-        }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-        }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((b*b-w[i]*w[i])*(b*b-w[i]*w[i]));
-            }
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
-        }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else if(!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        else
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
-        }
-        
-        var layout = {
-            title: 's-plane',
-            showlegend: false,
-            shapes: [{
-                type: 'line',
-                x0: 0,
-                y0: -0.1,
-                x1: 0,
-                yref: 'paper',
-                y1: 1,
-                line: {
-                  width: 2,
-                  dash: 'dot'
-                }
-            }]
-        };
-    
-        
-        var trace1 = {
-            x: xn,
-            y: yn,
-            type: 'scatter',
-            mode: 'markers',
-            marker: {
-                size: 10,
-                line: {
-                    width: 1
-                }
-            }
-        };
-        var trace2 = {
-            x: xd,
-            y: yd,
-            type: 'scatter',
-            mode: 'markers',
-            marker: {
-                symbol: 'cross',
-                size: 10,
-                line: {
-                    width: 1
-                }
-            }
-        };
-        var trace3 = {
-            x: w,
-            y: plty,
-            type: 'scatter',
-            mode: 'line',
-        };
-          
-        var data = [trace1, trace2];
-        var data1 = [trace3];
-    
-        var config = {responsive: true}
-        var layout1 = {
-            title: '|H(s)|',
-            showlegend: false,
-            xaxis: {
-                title: 'Frequency'
-            },
-            yaxis: {
-                title: 'Magnitude'
-            }
-        };
-          
-        Plotly.newPlot('figure6', data, layout, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
-        Plotly.relayout('figure6', update);
-        Plotly.newPlot('figure7', data1, layout1, config);
-          var update = {
-            width: 375,
-            height: 375
-        };
-        Plotly.relayout('figure7', update);
-}
+    a = parseFloat(a);
+    var b = document.getElementById("fillSec52").value;
+    b = parseFloat(b);
+    var c = document.getElementById("fillSec53").value;
+    c = parseFloat(c);
+    var d = document.getElementById("fillSec54").value;
+    d = parseFloat(d);
 
-// ------------------------------------------------ Dynamic stability box ----------------------------------
+    var xn = [], xd = [], yn = [], yd = [];
 
-function add_field1()
-{
-    if(uniquenumberofsignals1>=10)
-    {
-        return;
+    var len = 101;
+    var w = [], plty = [], pltn = [], pltd = [];
+    w = makeArr(-20, 20, len);
+
+    var numeratorR = [];
+    var numeratorI = [];
+    var denominatorR = [];
+    var denominatorI = [];
+    if (isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1);
+        }
     }
-    numberofsignals1 += 1;
-    uniquenumberofsignals1 += 1;
-  document.getElementById("field_div1").innerHTML=document.getElementById("field_div1").innerHTML+
-  "<p id='input_num"+numberofsignals+"_wrapper1'><input type='text' class='input_text' id='ROC_"+numberofsignals1+"' placeholder='[R1 , R2]'><input type='checkbox' class='input_check' id='stability_"+numberofsignals1+"'><input type='checkbox' class='input_check' id='causality_"+numberofsignals1+"'></p>";
-}
-function remove_field1(id1)
-{
-    uniquenumberofsignals1 -= 1;
-    const element = document.getElementById(id1+"_wrapper1");
-    element.remove();
-}
-
-
-// --------------------------------------------------- Stability and Causality --------------------------------------
-
-function stabilityInit()
-{
-    for(var i=0; i<ROCNumS; i++)
-    {
-        document.getElementById("buttonSec61").click();
+    else if (isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
     }
-    myStabilityFunction();
-}
-
-function myStabilityFunction() {
-    var x = document.getElementById("buttonSec61");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
     }
-}
-
-function StabilityInit(){
-
-    var numPoles = Math.floor(Math.random()*4)+1;
-    
-    var a = 3*Math.random()-1.5;
-    var b = 3*Math.random()-1.5;
-    var c = 3*Math.random()-1.5;
-    var d = 3*Math.random()-1.5;
-    var e = 3*Math.random()-1.5;
-    var f = 3*Math.random()-1.5;
-
-    var all = [];
-
-    if(numPoles==1)
-    {
-        all.push(c);
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
     }
-    else if(numPoles==2)
-    {
-        all.push(c);
-        all.push(d);
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((b * b - w[i] * w[i]) * (b * b - w[i] * w[i]));
+        }
+        xn.push(0, 0);
+        yn.push(b, -b);
     }
-    else if(numPoles==3)
-    {
-        all.push(c);
-        all.push(d);
-        all.push(e);
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
     }
-    else
-    {
-        all.push(c);
-        all.push(d);
-        all.push(e);
-        all.push(f);
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]);
+        }
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]);
+        }
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
     }
 
-    var numerator = [];
-    var denominator = [];
-    if(numPoles==1)
-    {
-        if(Math.abs(a-c)>0.01)
-        {
-            numerator.push(a);
-        }
-        if(Math.abs(b-c)>0.01)
-        {
-            numerator.push(b);
-        }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
-            denominator.push(c);
-        }
-    }
-    else if(numPoles==2)
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01)
-        {
-            numerator.push(a);
-        }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01)
-        {
-            numerator.push(b);
-        }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
-            denominator.push(c);
-        }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
-            denominator.push(d);
-        }
-    }
-    else if(numPoles==3)
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01 && Math.abs(a-e)>0.01)
-        {
-            numerator.push(a);
-        }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01 && Math.abs(b-e)>0.01)
-        {
-            numerator.push(b);
-        }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
-            denominator.push(c);
-        }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
-            denominator.push(d);
-        }
-        if(Math.abs(a-e)>0.01 && Math.abs(b-e)>0.01)
-        {
-            denominator.push(e);
-        }
-    }
-    else
-    {
-        if(Math.abs(a-c)>0.01 && Math.abs(a-d)>0.01 && Math.abs(a-e)>0.01 && Math.abs(a-f)>0.01)
-        {
-            numerator.push(a);
-        }
-        if(Math.abs(b-c)>0.01 && Math.abs(b-d)>0.01 && Math.abs(b-e)>0.01 && Math.abs(b-f)>0.01)
-        {
-            numerator.push(b);
-        }
-        if(Math.abs(a-c)>0.01 && Math.abs(b-c)>0.01)
-        {
-            denominator.push(c);
-        }
-        if(Math.abs(a-d)>0.01 && Math.abs(b-d)>0.01)
-        {
-            denominator.push(d);
-        }
-        if(Math.abs(a-e)>0.01 && Math.abs(b-e)>0.01)
-        {
-            denominator.push(e);
-        }
-        if(Math.abs(a-f)>0.01 && Math.abs(b-f)>0.01)
-        {
-            denominator.push(f);
-        }
-    }
-    var allHere = [];
-    var l = denominator.length;
-    for(var i=0; i<l; i++)
-    {
-        allHere.push(denominator[i]);
-    }
-    poles1 = ROCCalc(allHere);
-    var mine = poles1.length+1;
-    ROCNumS = mine;
-
-    var ln = numerator.length;
-    var xn = [], xd = [];
-    var ld = denominator.length;
-    for(var i=0; i<ln; i++)
-    {
-        xn.push(0);
-    }
-    for(var i=0; i<ld; i++)
-    {
-        xd.push(0);
-    }
-    
     var layout = {
         title: 's-plane',
         showlegend: false,
@@ -1964,13 +1452,512 @@ function StabilityInit(){
             yref: 'paper',
             y1: 1,
             line: {
-              width: 2,
-              dash: 'dot'
+                width: 2,
+                dash: 'dot'
             }
         }]
     };
 
-    
+
+    var trace1 = {
+        x: xn,
+        y: yn,
+        type: 'scatter',
+        mode: 'markers',
+        marker: {
+            size: 10,
+            line: {
+                width: 1
+            }
+        }
+    };
+    var trace2 = {
+        x: xd,
+        y: yd,
+        type: 'scatter',
+        mode: 'markers',
+        marker: {
+            symbol: 'cross',
+            size: 10,
+            line: {
+                width: 1
+            }
+        }
+    };
+    var trace3 = {
+        x: w,
+        y: plty,
+        type: 'scatter',
+        mode: 'line',
+    };
+
+    var data = [trace1, trace2];
+    var data1 = [trace3];
+
+    var config = { responsive: true }
+    var layout1 = {
+        title: '|H(s)|',
+        showlegend: false,
+        xaxis: {
+            title: 'Frequency'
+        },
+        yaxis: {
+            title: 'Magnitude'
+        }
+    };
+
+    Plotly.newPlot('figure6', data, layout, config);
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
+    Plotly.relayout('figure6', update);
+    Plotly.newPlot('figure7', data1, layout1, config);
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
+    Plotly.relayout('figure7', update);
+}
+
+function sPlaneI() {
+
+    var a = document.getElementById("fillSec51").value;
+    a = parseFloat(a);
+    var b = document.getElementById("fillSec52").value;
+    b = parseFloat(b);
+    var c = document.getElementById("fillSec53").value;
+    c = parseFloat(c);
+    var d = document.getElementById("fillSec54").value;
+    d = parseFloat(d);
+
+    var xn = [], xd = [], yn = [], yd = [];
+
+    var len = 101;
+    var w = [], plty = [], pltn = [], pltd = [];
+    w = makeArr(-20, 20, len);
+
+    var numeratorR = [];
+    var numeratorI = [];
+    var denominatorR = [];
+    var denominatorI = [];
+    if (isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1);
+        }
+    }
+    else if (isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+    }
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+    }
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+    }
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((b * b - w[i] * w[i]) * (b * b - w[i] * w[i]));
+        }
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]);
+        }
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]);
+        }
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
+        }
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+
+    var layout = {
+        title: 's-plane',
+        showlegend: false,
+        shapes: [{
+            type: 'line',
+            x0: 0,
+            y0: -0.1,
+            x1: 0,
+            yref: 'paper',
+            y1: 1,
+            line: {
+                width: 2,
+                dash: 'dot'
+            }
+        }]
+    };
+
+
+    var trace1 = {
+        x: xn,
+        y: yn,
+        type: 'scatter',
+        mode: 'markers',
+        marker: {
+            size: 10,
+            line: {
+                width: 1
+            }
+        }
+    };
+    var trace2 = {
+        x: xd,
+        y: yd,
+        type: 'scatter',
+        mode: 'markers',
+        marker: {
+            symbol: 'cross',
+            size: 10,
+            line: {
+                width: 1
+            }
+        }
+    };
+    var trace3 = {
+        x: w,
+        y: plty,
+        type: 'scatter',
+        mode: 'line',
+    };
+
+    var data = [trace1, trace2];
+    var data1 = [trace3];
+
+    var config = { responsive: true }
+    var layout1 = {
+        title: '|H(s)|',
+        showlegend: false,
+        xaxis: {
+            title: 'Frequency'
+        },
+        yaxis: {
+            title: 'Magnitude'
+        }
+    };
+
+    Plotly.newPlot('figure6', data, layout, config);
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
+    Plotly.relayout('figure6', update);
+    Plotly.newPlot('figure7', data1, layout1, config);
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
+    Plotly.relayout('figure7', update);
+}
+
+// ------------------------------------------------ Dynamic stability box ----------------------------------
+
+function add_field1() {
+    if (uniquenumberofsignals1 >= 10) {
+        return;
+    }
+    numberofsignals1 += 1;
+    uniquenumberofsignals1 += 1;
+    document.getElementById("field_div1").innerHTML = document.getElementById("field_div1").innerHTML +
+        "<p id='input_num" + numberofsignals + "_wrapper1'><input type='text' class='input_text' id='ROC_" + numberofsignals1 + "' placeholder='[R1 , R2]'><input type='checkbox' class='input_check' id='stability_" + numberofsignals1 + "'><input type='checkbox' class='input_check' id='causality_" + numberofsignals1 + "'></p>";
+}
+function remove_field1(id1) {
+    uniquenumberofsignals1 -= 1;
+    const element = document.getElementById(id1 + "_wrapper1");
+    element.remove();
+}
+
+
+// --------------------------------------------------- Stability and Causality --------------------------------------
+
+function stabilityInit() {
+    for (var i = 0; i < ROCNumS; i++) {
+        document.getElementById("buttonSec61").click();
+    }
+    myStabilityFunction();
+}
+
+function myStabilityFunction() {
+    var x = document.getElementById("buttonSec61");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+function StabilityInit() {
+
+    var numPoles = Math.floor(Math.random() * 4) + 1;
+
+    var a = 3 * Math.random() - 1.5;
+    var b = 3 * Math.random() - 1.5;
+    var c = 3 * Math.random() - 1.5;
+    var d = 3 * Math.random() - 1.5;
+    var e = 3 * Math.random() - 1.5;
+    var f = 3 * Math.random() - 1.5;
+
+    var all = [];
+
+    if (numPoles == 1) {
+        all.push(c);
+    }
+    else if (numPoles == 2) {
+        all.push(c);
+        all.push(d);
+    }
+    else if (numPoles == 3) {
+        all.push(c);
+        all.push(d);
+        all.push(e);
+    }
+    else {
+        all.push(c);
+        all.push(d);
+        all.push(e);
+        all.push(f);
+    }
+
+    var numerator = [];
+    var denominator = [];
+    if (numPoles == 1) {
+        if (Math.abs(a - c) > 0.01) {
+            numerator.push(a);
+        }
+        if (Math.abs(b - c) > 0.01) {
+            numerator.push(b);
+        }
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
+            denominator.push(c);
+        }
+    }
+    else if (numPoles == 2) {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01) {
+            numerator.push(a);
+        }
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01) {
+            numerator.push(b);
+        }
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
+            denominator.push(c);
+        }
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
+            denominator.push(d);
+        }
+    }
+    else if (numPoles == 3) {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01 && Math.abs(a - e) > 0.01) {
+            numerator.push(a);
+        }
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01 && Math.abs(b - e) > 0.01) {
+            numerator.push(b);
+        }
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
+            denominator.push(c);
+        }
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
+            denominator.push(d);
+        }
+        if (Math.abs(a - e) > 0.01 && Math.abs(b - e) > 0.01) {
+            denominator.push(e);
+        }
+    }
+    else {
+        if (Math.abs(a - c) > 0.01 && Math.abs(a - d) > 0.01 && Math.abs(a - e) > 0.01 && Math.abs(a - f) > 0.01) {
+            numerator.push(a);
+        }
+        if (Math.abs(b - c) > 0.01 && Math.abs(b - d) > 0.01 && Math.abs(b - e) > 0.01 && Math.abs(b - f) > 0.01) {
+            numerator.push(b);
+        }
+        if (Math.abs(a - c) > 0.01 && Math.abs(b - c) > 0.01) {
+            denominator.push(c);
+        }
+        if (Math.abs(a - d) > 0.01 && Math.abs(b - d) > 0.01) {
+            denominator.push(d);
+        }
+        if (Math.abs(a - e) > 0.01 && Math.abs(b - e) > 0.01) {
+            denominator.push(e);
+        }
+        if (Math.abs(a - f) > 0.01 && Math.abs(b - f) > 0.01) {
+            denominator.push(f);
+        }
+    }
+    var allHere = [];
+    var l = denominator.length;
+    for (var i = 0; i < l; i++) {
+        allHere.push(denominator[i]);
+    }
+    poles1 = ROCCalc(allHere);
+    var mine = poles1.length + 1;
+    ROCNumS = mine;
+
+    var ln = numerator.length;
+    var xn = [], xd = [];
+    var ld = denominator.length;
+    for (var i = 0; i < ln; i++) {
+        xn.push(0);
+    }
+    for (var i = 0; i < ld; i++) {
+        xd.push(0);
+    }
+
+    var layout = {
+        title: 's-plane',
+        showlegend: false,
+        shapes: [{
+            type: 'line',
+            x0: 0,
+            y0: -0.1,
+            x1: 0,
+            yref: 'paper',
+            y1: 1,
+            line: {
+                width: 2,
+                dash: 'dot'
+            }
+        }]
+    };
+
+
     var trace1 = {
         x: numerator,
         y: xn,
@@ -1997,63 +1984,67 @@ function StabilityInit(){
         }
     };
 
-      
+
     var data = [trace1, trace2];
-    var config = {responsive: true}
-      
+    var config = { responsive: true }
+
     Plotly.newPlot('figure8', data, layout, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure8', update);
 
     var rocs = [];
-    for(var i=0; i<ROCNumS; i++)
-    {
-        if(i==0)
-        {
-            rocs.push(""+(i+1)+": [-Inf, "+Math.floor(poles1[i]*100)/100+"]");
-            var left = 0;
-            var right;
-            if(poles1[i]<0)
-            {
-                right = (Math.floor(poles1[i]*100)+1)/100;
+    if (poles1.length === 0) {
+        rocs.push("1: [-Inf, Inf]");
+        stable = 1;
+    } else {
+        for (var i = 0; i < ROCNumS; i++) {
+            if (i == 0) {
+                rocs.push("" + (i + 1) + ": [-Inf, " + Math.floor(poles1[i] * 100) / 100 + "]");
+                var left = -99999;
+                var right;
+                if (poles1[i] < 0) {
+                    right = (Math.floor(poles1[i] * 100) + 1) / 100;
+                }
+                else {
+                    right = Math.floor(poles1[i] * 100) / 100;
+                }
+                if (left < 0 && right > 0) {
+                    stable = 1;
+                }
             }
-            else
-            {
-                right = Math.floor(poles1[i]*100)/100;
+            else if (i == ROCNumS - 1) {
+                rocs.push((i + 1) + ": [" + Math.floor(poles1[i - 1] * 100) / 100 + ", Inf]");
+                var left = Math.floor(poles1[i - 1] * 100) / 100;
+                if (left < 0) {
+                    stable = i + 1;
+                }
             }
-            if(left<0 && right>0)
-            {
-                stable = 1;
-            }
-        }
-        else if(i==ROCNumS-1)
-        {
-            rocs.push("\n"+(i+1)+": ["+Math.floor(poles1[i-1]*100)/100+", Inf]");
-            var left = Math.floor(poles1[i-1]*100)/100;
-            if(left<0)
-            {
-                stable = i+1;
-            }
-        }
-        else
-        {
-            rocs.push("\n"+(i+1)+": ["+Math.floor(poles1[i-1]*100)/100+", "+Math.floor(poles1[i]*100)/100+"]");
-            var left = Math.floor(poles1[i-1]*100)/100;
-            var right;
-            if(poles1[i]<0)
-            {
-                right = (Math.floor(poles1[i]*100)+1)/100;
-            }
-            else
-            {
-                right = Math.floor(poles1[i]*100)/100;
-            }
-            if(left<0 && right>0)
-            {
-                stable = i+1;
+            else {
+                rocs.push((i + 1) + ": [" + Math.floor(poles1[i - 1] * 100) / 100 + ", " + Math.floor(poles1[i] * 100) / 100 + "]");
+                var left = Math.floor(poles1[i - 1] * 100) / 100;
+                var right;
+                if (poles1[i] < 0) {
+                    right = (Math.floor(poles1[i] * 100) + 1) / 100;
+                }
+                else {
+                    right = Math.floor(poles1[i] * 100) / 100;
+                }
+                if (left < 0 && right > 0) {
+                    stable = i + 1;
+                }
             }
         }
     }
@@ -2062,39 +2053,35 @@ function StabilityInit(){
     element.style.color = "#FF0000";
     element.style.fontWeight = "bold";
     element.style.fontSize = "x-large";
-    element.innerHTML = "<pre>" + rocs + "<\pre>";
+    element.innerHTML = "<pre>" + rocs.join('\n') + "</pre>";
+
 }
 
-function stabilityCheck()
-{
+function stabilityCheck() {
     var st = document.getElementById("fillSec61").value;
     st = parseInt(st);
     var ca = document.getElementById("fillSec62").value;
     ca = parseInt(ca);
 
-    if(st==stable && ca==causal)
-    {
+    if (st == stable && ca == causal) {
         var element = document.getElementById("result8")
         element.style.color = "#006400";
         element.style.fontWeight = "bold";
         element.innerHTML = "Both are correct!";
     }
-    else if(st!=stable && ca==causal)
-    {
+    else if (st != stable && ca == causal) {
         var element = document.getElementById("result8")
         element.style.color = "#FFD700";
         element.style.fontWeight = "bold";
         element.innerHTML = "Stability is WRONG! Causality is correct!";
     }
-    else if(st==stable && ca!=causal)
-    {
+    else if (st == stable && ca != causal) {
         var element = document.getElementById("result8")
         element.style.color = "#FFD700";
         element.style.fontWeight = "bold";
         element.innerHTML = "Stability is correct! Causality is WRONG!";
     }
-    else
-    {
+    else {
         var element = document.getElementById("result8")
         element.style.color = "#FF0000";
         element.style.fontWeight = "bold";
@@ -2104,11 +2091,10 @@ function stabilityCheck()
 
 // ------------------------------------------ Filtering -------------------------------------------
 
-function filteringInit(){
+function filteringInit() {
 
     var filterChoiceVar = Math.random();
-    if(filterChoiceVar<0.5)
-    {
+    if (filterChoiceVar < 0.5) {
         filterChoice = 1;
         var element = document.getElementById("rocs2")
         element.style.color = "#000000";
@@ -2116,8 +2102,7 @@ function filteringInit(){
         element.style.fontSize = "x-large";
         element.innerHTML = "LOW PASS FILTER";
     }
-    else
-    {
+    else {
         filterChoice = 2;
         var element = document.getElementById("rocs2")
         element.style.color = "#000000";
@@ -2128,12 +2113,11 @@ function filteringInit(){
 
     var len = 101;
     var ploty = [];
-    var w = makeArr(-Math.PI,Math.PI,len);
-    for(var i=0; i<len; i++)
-    {
+    var w = makeArr(-20, 20, len);
+    for (var i = 0; i < len; i++) {
         ploty.push(1);
     }
-    
+
     var trace1 = {
         x: w,
         y: ploty,
@@ -2152,20 +2136,29 @@ function filteringInit(){
         }
     };
 
-      
+
     var data = [trace1];
-    var config = {responsive: true}
-      
+    var config = { responsive: true }
+
     Plotly.newPlot('figure9', data, layout1, config);
-      var update = {
-        width: 500,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure9', update);
 }
 
-function filterCheck()
-{
+function filterCheck() {
     var a = document.getElementById("fillSec81").value;
     a = parseFloat(a);
     var b = document.getElementById("fillSec82").value;
@@ -2179,205 +2172,170 @@ function filterCheck()
 
     var len = 101;
     var w = [], plty = [], pltn = [], pltd = [];
-    w = makeArr(-math.PI,math.PI,len);
+    w = makeArr(-20, 20, len);
 
-    if(isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1);
-            }
+    if (isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1);
         }
-        else if(isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-       }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
+    }
+    else if (isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
         }
-        else if(isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(1/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
+        xd.push(0, 0);
+        yd.push(d, -d);
+    }
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
         }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((b*b-w[i]*w[i])*(b*b-w[i]*w[i]));
-            }
-            xn.push(0,0);
-            yn.push(b,-b);
+        xd.push(c, c);
+        yd.push(0, 0);
+    }
+    else if (isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(1 / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
         }
-        else if(isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
+        xd.push(c, c);
+        yd.push(d, -d);
+    }
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((b * b - w[i] * w[i]) * (b * b - w[i] * w[i]));
         }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(0,0);
-            yn.push(b,-b);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
         }
-        else if(isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((b*b-w[i]*w[i])*(b*b-w[i]*w[i]))/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(0,0);
-            yn.push(b,-b);
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
         }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(0,0);
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (isNaN(a) && !isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((b * b - w[i] * w[i]) * (b * b - w[i] * w[i])) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
         }
-        else if(!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(0, 0);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]);
         }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(0,0);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
         }
-        else if(!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i])*(a*a-w[i]*w[i]) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(0,0);
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
         }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i]);
-            }
-            xn.push(a,a);
-            yn.push(b,-b);
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && isNaN(b) && !isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i]) * (a * a - w[i] * w[i]) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
         }
-        else if(!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((d*d-w[i]*w[i])*(d*d-w[i]*w[i])));
-            }
-            xd.push(0,0);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(0, 0);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]);
         }
-        else if(!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d))
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i])*(c*c-w[i]*w[i]) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(0,0);
-            xn.push(a,a);
-            yn.push(b,-b);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && isNaN(c) && !isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((d * d - w[i] * w[i]) * (d * d - w[i] * w[i])));
         }
-        else
-        {
-            for(var i=0; i<len; i++)
-            {
-                plty.push(((a*a-w[i]*w[i]+b*b)*(a*a-w[i]*w[i]+b*b) + 4*a*a*w[i]*w[i])/((c*c-w[i]*w[i]+d*d)*(c*c-w[i]*w[i]+d*d) + 4*c*c*w[i]*w[i]));
-            }
-            xd.push(c,c);
-            yd.push(d,-d);
-            xn.push(a,a);
-            yn.push(b,-b);
+        xd.push(0, 0);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else if (!isNaN(a) && !isNaN(b) && !isNaN(c) && isNaN(d)) {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i]) * (c * c - w[i] * w[i]) + 4 * c * c * w[i] * w[i]));
         }
+        xd.push(c, c);
+        yd.push(0, 0);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
+    else {
+        for (var i = 0; i < len; i++) {
+            plty.push(((a * a - w[i] * w[i] + b * b) * (a * a - w[i] * w[i] + b * b) + 4 * a * a * w[i] * w[i]) / ((c * c - w[i] * w[i] + d * d) * (c * c - w[i] * w[i] + d * d) + 4 * c * c * w[i] * w[i]));
+        }
+        xd.push(c, c);
+        yd.push(d, -d);
+        xn.push(a, a);
+        yn.push(b, -b);
+    }
 
-    var lp = plty[parseInt((len-1)/2)];
-    var hp = plty[0];
+    var lowEnergy = 0;
+    var highEnergy = 0;
+    for (var i = 0; i < len; i++) {
+        if (Math.abs(w[i]) < 5) {
+            lowEnergy += plty[i] * plty[i];
+        }
+        else {
+            highEnergy += plty[i] * plty[i];
+        }
+    }
 
-    var result1 = plty.indexOf(Math.max(...plty));
-    var result2 = plty.indexOf(Math.min(...plty));
-
-    console.log(result1,result2);
-
-    if(filterChoice==1)
-    {
-        if(result1==parseInt((len-1)/2) && (result2==0 || result2==len-1))
-        {
+    if (filterChoice == 1) {
+        if (lowEnergy > highEnergy * 1.5) {
             var element = document.getElementById("result5")
             element.style.color = "#006400";
             element.style.fontWeight = "bold";
             element.innerHTML = "Right Answer!";
         }
-        else
-        {
+        else {
             var element = document.getElementById("result5")
             element.style.color = "#FF0000";
             element.style.fontWeight = "bold";
             element.innerHTML = "Wrong Answer!";
         }
     }
-    else
-    {
-        if(result2==parseInt((len-1)/2) && (result1==0 || result1==len-1))
-        {
+    else {
+        if (highEnergy > lowEnergy * 1.5) {
             var element = document.getElementById("result5")
             element.style.color = "#006400";
             element.style.fontWeight = "bold";
             element.innerHTML = "Right Answer!";
         }
-        else
-        {
+        else {
             var element = document.getElementById("result5")
             element.style.color = "#FF0000";
             element.style.fontWeight = "bold";
@@ -2394,7 +2352,7 @@ function filterCheck()
 
     var data1 = [trace3];
 
-    var config = {responsive: true}
+    var config = { responsive: true }
     var layout1 = {
         title: '|H(s)|',
         showlegend: false,
@@ -2405,12 +2363,22 @@ function filterCheck()
             title: 'Magnitude'
         }
     };
-    
+
     Plotly.newPlot('figure9', data1, layout1, config);
-      var update = {
-        width: 375,
-        height: 375
-    };
+
+    if (screen.width < 400) {
+        var update = {
+            width: 0.7 * screen.width,
+            height: 400
+        };
+    }
+    else {
+        var update = {
+            width: 350,
+            height: 400
+        };
+    }
+
     Plotly.relayout('figure9', update);
 }
 
@@ -2420,23 +2388,14 @@ function makeArr(startValue, stopValue, cardinality) {
     var arr = [];
     var step = (stopValue - startValue) / (cardinality - 1);
     for (var i = 0; i < cardinality; i++) {
-      arr.push(startValue + (step * i));
+        arr.push(startValue + (step * i));
     }
     return arr;
 }
 
 // ------------------------------------------ On startup ----------------------------------------------------------
 
-function startup()
-{
-    sPlaneInit();
-    ROCNumberInit();
-    allROCNumberInit();
-    //polyInit();
-    sPlaneInitI();
-    StabilityInit();
-    filteringInit();
-    //stabilityInit();
+function startup() {
     document.getElementById("default").click();
 }
 
