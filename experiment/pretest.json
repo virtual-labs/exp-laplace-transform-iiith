@@ -28,6 +28,34 @@
       },
       "correctAnswer": "a",
       "difficulty": "Easy"
+    },
+    {
+      "question": "A system has poles at 1 and -1. Which of the following is true for this system?",
+      "answers": {
+        "a": "The system could be both stable and causal",
+        "b": "The system can be stable but not causal",
+        "c": "The system can be causal but not stable",
+        "d": "both (b) and (c)"
+      },
+      "explanations": {
+        "d": "For stable and causal systems, all the poles should be to the left of the imaginary axis."
+      },
+      "correctAnswer": "d",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "A system has poles at 1 and j. How many distinct systems are possible with this information?",
+      "answers": {
+        "a": "1",
+        "b": "2",
+        "c": "3",
+        "d": "4"
+      },
+      "explanations": {
+        "c": "The two distinct poles divide the s-plane into three ROC."
+      },
+      "correctAnswer": "c",
+      "difficulty": "Intermediate"
     }
   ]
 }
