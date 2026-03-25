@@ -187,7 +187,7 @@ $\text{H}(s)|_{s=s_0} = |\text{H}(s_0)| e^{j\angle \text{H}(s_0)}$
 
 $|\text{H}(s_0)|  =  \frac{1}{|s_0 + 1|}$ and $\angle \text{H}(s_0) = \theta$
 
-Given a rational system function:  
+### Given a rational system function:  
 
 $\text{H}(s) = \frac{\prod_{i=1}^{M} (s-z_i)}{\prod_{i=1}^{N } (s-p_i)} \quad \text{and ROC~}  N>M $
 
@@ -195,14 +195,6 @@ $|\text{H}(s)|_{s=s_0} = \frac{\prod_{i=1}^{M} (s-z_i)}{\prod_{i=1}^{N }|s_0 -  
 
 $\angle \text{H}(s)|_{s=s_0} = \sum_{i=1}^{M} \angle(s_0 – \text{z}_i) - \sum_{i=1}^{N} \angle (s_0 – P_i) $
 
-Example:
-Let $\text{x}(t) = \cos(\omega_0 t)$ for given $\text{H}(s) = \frac{1}{s+1}$ and $Re\{s\} > -1$
-
-$\cos(\omega_0 t) \rightarrow  \frac{1}{\sqrt{1+\omega_0^2}} \cos({\omega_ot-\theta})$
-
-where $\theta = tan^{-1}({\omega_0})$
-
-$|\text{H}(j\omega_o)| =  \frac{1}{\sqrt{1+\omega_0^2}} \rightarrow$ Low pass filter
 
 For any LTI system $ \cos({\omega_o}) \rightarrow |\text{H}(j\omega_o)|\cos({\omega_ot-\theta})$
 
@@ -210,4 +202,16 @@ and $\theta = \angle ~\text{H}{(j\omega_0})$
 
 where $|\text{H}(j\omega_o)| \rightarrow \text{magnitude response}$ and $\angle \text{H}(j\omega_o) \rightarrow \text{phase response}$
 
-The $\text{H}(s) = \frac{s}{s+1} \rightarrow$ High Pass filter
+### Example:
+
+Consider the input $\text{x}(t) = \cos(\omega_0 t)$ for a system with transfer function $\text{H}(s) = \frac{1}{s+1}$ and ROC $Re\{s\} > -1$
+
+$\cos(\omega_0 t) \rightarrow  \frac{1}{\sqrt{1+\omega_0^2}} \cos({\omega_ot-\theta})$
+
+where $\theta = tan^{-1}({\omega_0})$
+
+Output signal magnitude is $|\text{H}(j\omega_o)| =  \frac{1}{\sqrt{1+\omega_0^2}} \rightarrow$ Low pass filter
+
+
+
+<!-- TODO: update the last section of equations to be more friendly -->
