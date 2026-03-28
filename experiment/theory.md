@@ -1,81 +1,79 @@
-
-# Laplace transform #
-
- The Laplace transform of a continuous time signal $\text{x}(t)$ can be expressed as:
+The Laplace transform of a continuous time signal $\text{x}(t)$ can be expressed as:
 $$\text{X}(s) = \int_{-\infty}^{\infty} \text{x}(t) e^{-st} dt$$
 
 Where $s = \sigma + j \omega$ represent a complex frequency on a complex number plane.
 
 $$ e^{-st} = e^{-(\sigma+j\omega)t} = e^{-\sigma t} e^{-j\omega t} $$
 
-We can clearly see that  
+We can clearly see that
 
-$Re\{e^{-s t}\} = e^{-\sigma t} \cos(\omega t)  $
+$Re\{e^{-s t}\} = e^{-\sigma t} \cos(\omega t) $
 
 $Im\{e^{-s t}\} =  - e^{-\sigma t} \sin(\omega t)$
 
-## Eigenfunctions of LTI systems ##
+### Eigenfunctions of LTI systems
 
 Let the system $h(t)$ be a linear and time invariant (LTI) system and the input $\text{x}(t) = e^{st}$. The output $\text{y}(t)$ of this system can be written as
 
  <p align="center"><img src="images/Block_diag_1.drawio.png" alt="drawing" width="300"/>
 
-$ \text{y}(t) = e^{st} * h(t) $
+$ \text{y}(t) = e^{st} \* h(t) $
 
-$~~~~~~~ =  \int_{-\infty}^{\infty} h(\tau) e^{s(t-\tau)} d\tau $
+$~~~~~~~ = \int\_{-\infty}^{\infty} h(\tau) e^{s(t-\tau)} d\tau $
 
-$~~~~~~~ =  \int_{-\infty}^{\infty}~ h(\tau) ~e^{st}~ e^{-s\tau} ~d\tau $
+$~~~~~~~ = \int\_{-\infty}^{\infty}~ h(\tau) ~e^{st}~ e^{-s\tau} ~d\tau $
 
-$~~~~~~~=  e^{st}   \int_{-\infty}^{\infty}~ h(\tau)~ e^{-s\tau} d\tau $
+$~~~~~~~= e^{st} \int\_{-\infty}^{\infty}~ h(\tau)~ e^{-s\tau} d\tau $
 
-$~~~~~~~       =  H(s) e^{st}  $
+$~~~~~~~ = H(s) e^{st} $
 
 $e^{st}$ is known as eigen function for LTI system and it preserves the shape of the input signal.
 
 Example - All RLC circuits are LTI systems. Recall that for any AC source, we always get sinusoidal voltage/current across any part of the circuit. The amplitude and phase might change but the shape remains the same
 
-The Laplace transform has always two parts:  
+The Laplace transform has always two parts:
 
-1) Mathematical expression
+1. Mathematical expression
 
-2) Region of convergence: the region in the complex s-plane, where the mathematical expression is valid.
+2. Region of convergence: the region in the complex s-plane, where the mathematical expression is valid.
 
-## Example ##
+#### Example
 
-1) $\text{x}(t) = e^{-t} u(t) $
+1. $\text{x}(t) = e^{-t} u(t) $
 
-    Solution: The Laplace transform is given as:
+   Solution: The Laplace transform is given as:
 
- $~~~~~~~~~~~~~~~~~~~~~~\text{X}(s) = \int_{-\infty}^{\infty} \text{x}(t) e^{-st} dt $
+$~~~~~~~~~~~~~~~~~~~~~~\text{X}(s) = \int\_{-\infty}^{\infty} \text{x}(t) e^{-st} dt $
 
-$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  =  \int_{0}^{\infty} e^{-t}  e^{-st} dt $
+$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ = \int\_{0}^{\infty} e^{-t} e^{-st} dt $
 
-$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ = \int_{0}^{\infty}  e^{-(s+1)t} dt $
+$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ = \int\_{0}^{\infty} e^{-(s+1)t} dt $
 
 $~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~= \frac{1}{s+1} $
 
-* Region of convergence (ROC) is region in the s-plane where the above expression is valid.
+- Region of convergence (ROC) is region in the s-plane where the above expression is valid.
 
-* The expression is valid if $Re{\{s+1\}} > 0$   i.e. $Re{\{s\}} > -1$. $ s = -1$ is a point of singularity.
+- The expression is valid if $Re{\{s+1\}} > 0$ i.e. $Re{\{s\}} > -1$. $ s = -1$ is a point of singularity.
 
  <p align="center"><img src="images/roc1.png" alt="drawing" width="300"/>
 
- Let $\text{X}(s)$ be the polynomials in $s$ variable as below:
+Let $\text{X}(s)$ be the polynomials in $s$ variable as below:
 
 $$\text{X}(s) = \frac{\text{A}(s)}{\text{B}(s)} $$
 
 Roots of $\text{A}(s)$ i.e. $ \text{A}(s) = 0 \rightarrow $ zeros
 
-Roots of $\text{B}(s)$  i.e. $\text{A}(s) = 0 \rightarrow $ poles
+Roots of $\text{B}(s)$ i.e. $\text{A}(s) = 0 \rightarrow $ poles
 
 Note: Poles play important role to decide ROC. ROC cannot have poles within them.
 
-## Exercise ##
+#### Exercise
 
- What is the ROC for the pole-zero plot shown below?
+What is the ROC for the pole-zero plot shown below?
+
   <p align="center"><img src="images/roc2.png" alt="drawing" width="300"/>
 
-## Linear constant coefficient differential equations (LCCDE) ##  
+### Linear constant coefficient differential equations (LCCDE)
 
 Any linear constant coefficient differential equations (LCCDE) in Laplace domain can be expressed as ratio of polynomials.
 
@@ -89,15 +87,15 @@ $~~~~~~~~~~~ \text{X}(s) = (s + a)~ \text{Y}(s)$
 
 $~~~~~~~~~~~\text{Y}(s) =  \frac{\text{X}(s)}{s + a}$
 
-$~~~~~~~~~~~ \text{H}(s) = \frac{\text{Y}(s)}{\text{X}(s)} =  \frac{1}{s + a}$  
+$~~~~~~~~~~~ \text{H}(s) = \frac{\text{Y}(s)}{\text{X}(s)} =  \frac{1}{s + a}$
 
 Here $\text{H}(s)$ is known as transfer function or system function.
 
-## Application of Laplace transform for system analysis ##
+### Application of Laplace transform for system analysis
 
 <p align="center"><img src="images/Block_diag_1.drawio.png" alt="drawing" width="300"/>
 
-Let $h(t)$ be the system with input $\text{x}(t)$ and output being $\text{y}(t)$.  
+Let $h(t)$ be the system with input $\text{x}(t)$ and output being $\text{y}(t)$.
 
 $~~~~~\text{y}(t) = \text{x}(t) * h(t)$
 
@@ -107,7 +105,7 @@ $~~~\text{Y}(s) = \text{X}(s) \text{H}(s)$
 
 We are interested in additional system properties and their effect on impulse response and system function
 
-## Causality of LTI system ##
+### Causality of LTI system
 
 For LTI system to be causal, we should have
 
@@ -121,23 +119,23 @@ $\tau > t,~ h(t-\tau) = 0 $
 
 $h(t) = 0~~ \forall~ t<0$
 
-* For a causal system (i.e.,$h(t)$ is a right-sided signal) , what is nature of $\text{H}(s)$ ?
+- For a causal system (i.e.,$h(t)$ is a right-sided signal) , what is nature of $\text{H}(s)$ ?
 
-* ROC of $\text{H}(s)$ will be right-sided plane. (Converse is not true in general)
+- ROC of $\text{H}(s)$ will be right-sided plane. (Converse is not true in general)
 
-* For a system with rational system function, causality is equivalent to the ROC being right-sided plane to the right of right most pole.
+- For a system with rational system function, causality is equivalent to the ROC being right-sided plane to the right of right most pole.
 
 Example:
 
- 1) $\text{H}(s) = \frac{1}{s+1}~\text{and}~ Re\{s\} > -1$
+1.  $\text{H}(s) = \frac{1}{s+1}~\text{and}~ Re\{s\} > -1$
 
-$~~~~~~~~~~h(t) = e^{-t} u(t)$  (Causal)
+$~~~~~~~~~~h(t) = e^{-t} u(t)$ (Causal)
 
-2) $\text{H}(s) = \frac{e^s}{s+1}$ and $Re\{s\} > -1$
+2. $\text{H}(s) = \frac{e^s}{s+1}$ and $Re\{s\} > -1$
 
-$~~~~~~~~~~h(t) = e^{-(t+1)} u(t+1)$  (Non-causal)
+$~~~~~~~~~~h(t) = e^{-(t+1)} u(t+1)$ (Non-causal)
 
-## Stability of LTI system (bounded input bounded output) ##
+### Stability of LTI system (bounded input bounded output)
 
 An LTI system is said to be stable if
 
@@ -151,29 +149,30 @@ $$~~~~\text{H}(s) = \int_{\infty}^{\infty} h(t) e^{-st} dt$$
 
 $$ \text{H}(s)|_{s=0} = \int_{\infty}^{\infty} h(t) dt < \infty$$
 
-Laplace transform converges at $s=0$, In fact, for any $s=j\omega = 0+j\omega, ~\text{H}(s)|_{s=j\omega} < \infty \rightarrow $ system is stable
+Laplace transform converges at $s=0$, In fact, for any $s=j\omega = 0+j\omega, ~\text{H}(s)|\_{s=j\omega} < \infty \rightarrow $ system is stable
 
 Note: $j\omega$-axis i.e. $Re\{s\} = 0$ is part of the ROC
 
 Example:
 
- 1) Shifting operator:  $h(t) = \delta(t-t_0)$
+1.  Shifting operator: $h(t) = \delta(t-t_0)$
 
-    Taking Laplace transform: $  \text{H}(s) =  e^{st_0}$
+    Taking Laplace transform: $ \text{H}(s) = e^{st_0}$
 
     ROC: Full $s$-plane (stable)
- 2) Integrator: $h(t) = u(t)$  
-  Taking Laplace transform:  $\text{H}(s) = \frac{1}{s}$
-  
-    ROC:  $Re\{s\} > 0$ (Not stable)
 
-Note: A causal system with rational system function is stable if and only if: all the poles have negative real part  
+2.  Integrator: $h(t) = u(t)$  
+    Taking Laplace transform: $\text{H}(s) = \frac{1}{s}$
 
-## Frequency analysis and geometric interpretation ##
+    ROC: $Re\{s\} > 0$ (Not stable)
+
+Note: A causal system with rational system function is stable if and only if: all the poles have negative real part
+
+### Frequency analysis and geometric interpretation
 
 Let $ \text{H}(s) = \frac{1}{s+1} $
 
-The pole-zero plot on $s$-plane is  
+The pole-zero plot on $s$-plane is
 
 <p align="center"><img src="images/roc3.png" alt="drawing" width="300"/>
 
@@ -187,14 +186,13 @@ $\text{H}(s)|_{s=s_0} = |\text{H}(s_0)| e^{j\angle \text{H}(s_0)}$
 
 $|\text{H}(s_0)|  =  \frac{1}{|s_0 + 1|}$ and $\angle \text{H}(s_0) = \theta$
 
-### Given a rational system function:  
+### Given a rational system function:
 
-$\text{H}(s) = \frac{\prod_{i=1}^{M} (s-z_i)}{\prod_{i=1}^{N } (s-p_i)} \quad \text{and ROC~}  N>M $
+$\text{H}(s) = \frac{\prod*{i=1}^{M} (s-z_i)}{\prod*{i=1}^{N } (s-p_i)} \quad \text{and ROC~} N>M $
 
 $|\text{H}(s)|_{s=s_0} = \frac{\prod_{i=1}^{M} (s-z_i)}{\prod_{i=1}^{N }|s_0 -  P_i|}$
 
-$\angle \text{H}(s)|_{s=s_0} = \sum_{i=1}^{M} \angle(s_0 – \text{z}_i) - \sum_{i=1}^{N} \angle (s_0 – P_i) $
-
+$\angle \text{H}(s)|_{s=s_0} = \sum_{i=1}^{M} \angle(s*0 – \text{z}\_i) - \sum*{i=1}^{N} \angle (s_0 – P_i) $
 
 For any LTI system $ \cos({\omega_o}) \rightarrow |\text{H}(j\omega_o)|\cos({\omega_ot-\theta})$
 
@@ -202,7 +200,7 @@ and $\theta = \angle ~\text{H}{(j\omega_0})$
 
 where $|\text{H}(j\omega_o)| \rightarrow \text{magnitude response}$ and $\angle \text{H}(j\omega_o) \rightarrow \text{phase response}$
 
-### Example:
+#### Example:
 
 Consider the input $\text{x}(t) = \cos(\omega_0 t)$ for a system with transfer function $\text{H}(s) = \frac{1}{s+1}$ and ROC $Re\{s\} > -1$
 
@@ -211,7 +209,5 @@ $\cos(\omega_0 t) \rightarrow  \frac{1}{\sqrt{1+\omega_0^2}} \cos({\omega_ot-\th
 where $\theta = tan^{-1}({\omega_0})$
 
 Output signal magnitude is $|\text{H}(j\omega_o)| =  \frac{1}{\sqrt{1+\omega_0^2}} \rightarrow$ Low pass filter
-
-
 
 <!-- TODO: update the last section of equations to be more friendly -->
