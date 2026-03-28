@@ -13,7 +13,7 @@
         "a": "$u(-t)$ is left-sided, so its Laplace transform has a left-sided ROC."
       },
       "correctAnswer": "a",
-      "difficulty": "Advanced"
+      "difficulty": "advanced"
     },
     {
       "question": "Select the correct statement from below for the system function $X(s) = \\frac{(s + 1)}{(s - 1)}$",
@@ -27,7 +27,7 @@
         "a": "The system can be causal depending on the ROC."
       },
       "correctAnswer": "a",
-      "difficulty": "Advanced"
+      "difficulty": "advanced"
     },
     {
       "question": "A system function is of the form $H(s) = \\frac{(s-a)}{(s-b)}$, where $a$ is not equal to $b$ and they are real numbers. This system can be both stable and causal if",
@@ -41,7 +41,7 @@
         "d": "For stability and causality, all poles should be less than zero. Thus, $b < 0$ is required."
       },
       "correctAnswer": "d",
-      "difficulty": "Advanced"
+      "difficulty": "advanced"
     },
     {
       "question": "The system with transfer function $H(s) = \\frac{1}{(s+0.2)}$, would behave as the following filter?",
@@ -52,7 +52,7 @@
         "d": "none of these"
       },
       "correctAnswer": "a",
-      "difficulty": "Advanced"
+      "difficulty": "advanced"
     }
   ]
 }

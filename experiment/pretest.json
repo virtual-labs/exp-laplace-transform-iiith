@@ -13,7 +13,7 @@
         "c": "The ROC for a stable system must include the imaginary axis."
       },
       "correctAnswer": "c",
-      "difficulty": "Easy"
+      "difficulty": "beginner"
     },
     {
       "question": "For a causal system, the Laplace transform of the impulse response has ROC which ",
@@ -27,7 +27,7 @@
         "a": "For causality, the ROC is to the right of the rightmost pole."
       },
       "correctAnswer": "a",
-      "difficulty": "Easy"
+      "difficulty": "beginner"
     },
     {
       "question": "A system has poles at 1 and -1. Which of the following is true for this system?",
@@ -41,7 +41,7 @@
         "d": "For stable and causal systems, all the poles should be to the left of the imaginary axis."
       },
       "correctAnswer": "d",
-      "difficulty": "Intermediate"
+      "difficulty": "intermediate"
     },
     {
       "question": "A system has poles at 1 and j. How many distinct systems are possible with this information?",
@@ -55,7 +55,7 @@
         "c": "The two distinct poles divide the s-plane into three ROC."
       },
       "correctAnswer": "c",
-      "difficulty": "Intermediate"
+      "difficulty": "intermediate"
     }
   ]
 }
